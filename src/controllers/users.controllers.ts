@@ -17,17 +17,14 @@ export const userController = (req: Request, res: Response) => {
 }
 
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterRequestBody>, res: Response) => {
-  try {
-    const result = await usersService.register(req.body)
-
-    // await databaseService.users.find({})
-    return res.json({
-      message: 'Success to regiter',
-      result
-    })
-  } catch (error) {
-    return res.json({
-      error: ' register failed'
-    })
-  }
+  const result = await usersService.register(req.body)
+  // throw new Error('chao em trai')
+  // await databaseService.users.find({})
+  return res.json({
+    message: 'Success to regiter',
+    result
+  })
+  return res.json({
+    error: ' register failed'
+  })
 }
