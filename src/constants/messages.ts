@@ -5,6 +5,7 @@ export const USERS_MESSAGES = {
   NAME_LENGTH_MUST_BE_1_TO_100: 'Name length must be between 1 and 100 characters',
   USER_NOT_FOUND: 'User not found',
   EMAIL_ALREADY_EXISTS: 'Email is already in use',
+  EMAIL_OR_PASSWORD_IS_INCORRECT: 'Email or password is incorrect',
   EMAIL_IS_REQUIRED: 'Email is required',
   EMAIL_IS_INVALID: 'Email is invalid',
   PASSWORD_IS_REQUIRED: 'Password is required',
@@ -20,4 +21,4 @@ export const USERS_MESSAGES = {
   LOGIN_SUCCESS: 'Login success',
   REGISTER_SUCCESS: 'Success to register',
   REGISTER_FAILED: 'Register failed'
-} as const;
+} as const
