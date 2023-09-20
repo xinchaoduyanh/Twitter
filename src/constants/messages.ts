@@ -20,5 +20,6 @@ export const USERS_MESSAGES = {
   // Thêm các thông báo về thành công và lỗi mới ở đây
   LOGIN_SUCCESS: 'Login success',
   REGISTER_SUCCESS: 'Success to register',
-  REGISTER_FAILED: 'Register failed'
+  REGISTER_FAILED: 'Register failed',
+  ACCESS_TOKEN_IS_REQUIRED: 'Access token is required'
 } as const
