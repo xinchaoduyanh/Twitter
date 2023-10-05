@@ -1,7 +1,7 @@
 import User from '~/models/schemas/User.schemas'
 import databaseService from './database.services'
 import { RegisterRequestBody } from '~/models/requests/User.requests'
-import { hassPassword } from '~/utils/crypto'
+import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
 import { Collection, ObjectId } from 'mongodb'
@@ -71,7 +71,7 @@ class UsersService {
         _id: user_id,
         email_verify_token: email_verify_token,
         date_of_birth: new Date(payload.date_of_birth),
-        password: hassPassword(payload.password)
+        password: hashPassword(payload.password)
       })
     )
     const [access_token, refresh_token] = await this.signAccessAndRefreshToken(user_id.toString())
@@ -153,6 +153,23 @@ class UsersService {
     console.log('fotgotpassword token', token)
     return {
       message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
+    }
+  }
+  async resetPassword(user_id: string, password: string) {
+    await databaseService.users.updateOne(
+      { _id: new ObjectId(user_id) },
+      {
+        $set: {
+          forgot_password_token: '',
+          password: hashPassword(password)
+        },
+        $currentDate: {
+          updated_at: true
+        }
+      }
+    )
+    return {
+      message: USERS_MESSAGES.RESET_PASSWORD_SUCCESS
     }
   }
   //Gui email kem duong link den email cua nguoi dung: http://twitter.com/fotgot-password?token=token
