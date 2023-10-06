@@ -7,7 +7,8 @@ import {
   resendVerifyEmailController,
   forgotPasswordController,
   verifyforgotPasswordController,
-  resetPasswordController
+  resetPasswordController,
+  getMeController
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
@@ -74,8 +75,8 @@ usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(
  */
 usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 /**
- * Description:Reset the password and change fotgot email token
- * Path: /reset password
+ * Description:Validate the verify forgot Token from  user
+ * Path: /verify-forgot-token-password
  * Method: POST
  * Header:
  * Body: {forgot_password_token: string}
@@ -88,5 +89,22 @@ usersRouter.post(
   verifyForgotPasswordTokenValidator,
   wrapRequestHandler(verifyforgotPasswordController)
 )
+/**
+ * Description:Reset the password and change fotgot email token
+ * Path: /reset password
+ * Method: POST
+ * Header:
+ * Body: {forgot_password_token: string,password: string,confirm_password:string}
+ *
+ */
 usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
+/**
+ * Description:Get profile
+ * Path: /me
+ * Method: Get
+ * Header:
+ * Header: {Authorization: Bearer <access_token>}
+ *
+ */
+usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
 export default usersRouter
