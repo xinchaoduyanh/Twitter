@@ -8,7 +8,8 @@ import {
   forgotPasswordController,
   verifyforgotPasswordController,
   resetPasswordController,
-  getMeController
+  getMeController,
+  updateMeController
 } from '~/controllers/users.controllers'
 import {
   accessTokenValidator,
@@ -18,6 +19,7 @@ import {
   refreshTokenValidator,
   registerValidator,
   resetPasswordValidator,
+  verifiedUserValidator,
   verifyForgotPasswordTokenValidator
 } from '~/middlewares/users.middlewares'
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -107,4 +109,14 @@ usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(r
  *
  */
 usersRouter.get('/me', accessTokenValidator, wrapRequestHandler(getMeController))
+/**
+ * Description:Update Profile (The account need to be verified already)
+ * Path: /me
+ * Method: Patch (Co the dung Put)
+ * Body: User Schema
+ * Header: {Authorization: Bearer <access_token>}
+ *
+ */
+usersRouter.patch('/me', accessTokenValidator, verifiedUserValidator, wrapRequestHandler(updateMeController))
+
 export default usersRouter
