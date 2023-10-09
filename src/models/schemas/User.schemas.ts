@@ -6,6 +6,7 @@ enum UserVerifyStatus {
   Banned // bị khóa
   // Premium
 }
+
 interface UserType {
   _id?: ObjectId
   name?: string

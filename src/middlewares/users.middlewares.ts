@@ -9,7 +9,7 @@ import { hashPassword } from '~/utils/crypto'
 import { verifyToken } from '~/utils/jwt'
 import { validate } from '~/utils/validation'
 import { capitalize } from 'lodash'
-import { NextFunction, Request } from 'express'
+import { NextFunction, Request, Response } from 'express'
 import { ObjectId } from 'mongodb'
 import { TokenPayload } from '~/models/requests/User.requests'
 import { UserVerifyStatus } from '~/constants/enums'
@@ -113,6 +113,43 @@ const forgotPasswordTokenSchema: ParamSchema = {
     }
   }
 }
+const imageURLSchema: ParamSchema = {
+  trim: true,
+  optional: true,
+  isString: { errorMessage: USERS_MESSAGES.IMAGE_URL_MUST_BE_A_STRING },
+  isLength: {
+    options: {
+      max: 400,
+      min: 6
+    },
+    errorMessage: USERS_MESSAGES.IMAGE_URL_LENGTH_MUST_BE_FROM_6_TO_400
+  }
+}
+const nameSchema: ParamSchema = {
+  notEmpty: {
+    errorMessage: USERS_MESSAGES.NAME_IS_REQUIRED
+  },
+  isString: {
+    errorMessage: USERS_MESSAGES.NAME_MUST_BE_A_STRING
+  },
+  isLength: {
+    options: {
+      max: 100,
+      min: 1
+    },
+    errorMessage: USERS_MESSAGES.NAME_LENGTH_MUST_BE_1_TO_100
+  },
+  trim: true
+}
+const dateOfBirthSchema: ParamSchema = {
+  isISO8601: {
+    options: {
+      strict: true,
+      strictSeparator: true
+    },
+    errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_ISO
+  }
+}
 export const loginValidator = validate(
   checkSchema(
     {
@@ -182,15 +219,7 @@ export const registerValidator = validate(
       },
       password: passwordSchema,
       confirm_password: passwordSchema,
-      date_of_birth: {
-        isISO8601: {
-          options: {
-            strict: true,
-            strictSeparator: true
-          },
-          errorMessage: USERS_MESSAGES.DATE_OF_BIRTH_MUST_BE_ISO
-        }
-      }
+      date_of_birth: dateOfBirthSchema
     },
     ['body']
   )
@@ -358,8 +387,71 @@ export const verifiedUserValidator = (req: Request, res: Response, next: NextFun
       new ErrorWithStatus({
         message: USERS_MESSAGES.USER_NOT_VERIFY,
         status: HTTP_STATUS.FORBIDDEN
-      })  
+      })
     )
   }
   next()
 }
+export const updateMeValidator = validate(
+  checkSchema(
+    {
+      name: {
+        ...nameSchema,
+        optional: true,
+        notEmpty: false
+      },
+      date_of_birth: { ...dateOfBirthSchema, optional: true },
+      bio: {
+        optional: true,
+        isString: { errorMessage: USERS_MESSAGES.BIO_MUST_BE_A_STRING },
+        trim: true,
+        isLength: {
+          options: {
+            max: 200,
+            min: 6
+          },
+          errorMessage: USERS_MESSAGES.BIO_LENGTH_MUST_BE_FROM_6_TO_200
+        }
+      },
+      location: {
+        optional: true,
+        isString: { errorMessage: USERS_MESSAGES.BIO_MUST_BE_A_STRING },
+        trim: true,
+        isLength: {
+          options: {
+            max: 200,
+            min: 6
+          },
+          errorMessage: USERS_MESSAGES.BIO_LENGTH_MUST_BE_FROM_6_TO_200
+        }
+      },
+      website: {
+        optional: true,
+        isString: { errorMessage: USERS_MESSAGES.WEBSITE_MUST_BE_A_STRING },
+        trim: true,
+        isLength: {
+          options: {
+            max: 200,
+            min: 6
+          },
+          errorMessage: USERS_MESSAGES.WEBSITE_LENGTH_MUST_BE_FROM_6_TO_200
+        }
+      },
+      avatar: imageURLSchema,
+      user_name: {
+        optional: true,
+        isString: { errorMessage: USERS_MESSAGES.USER_NAME_MUST_BE_A_STRING },
+        trim: true,
+        isLength: {
+          options: {
+            max: 50,
+            min: 1
+          },
+          errorMessage: USERS_MESSAGES.USER_NAME_LENGTH_MUST_BE_FROM_1_TO_50
+        }
+      },
+      cover_photo: imageURLSchema
+    },
+    ['body']
+  )
+)

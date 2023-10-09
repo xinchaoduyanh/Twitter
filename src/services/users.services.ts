@@ -1,6 +1,6 @@
 import User from '~/models/schemas/User.schemas'
 import databaseService from './database.services'
-import { RegisterRequestBody } from '~/models/requests/User.requests'
+import { RegisterRequestBody, UpdateMeReqBody } from '~/models/requests/User.requests'
 import { hashPassword } from '~/utils/crypto'
 import { signToken } from '~/utils/jwt'
 import { TokenType, UserVerifyStatus } from '~/constants/enums'
@@ -98,7 +98,7 @@ class UsersService {
   }
   async checkEmailExist(email: string) {
     const user = await databaseService.users.findOne({ email })
-    console.log(user)
+    // console.log(user)
     return Boolean(user)
   }
   async login({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -195,7 +195,13 @@ class UsersService {
     )
     return user
   }
-  //Gui email kem duong link den email cua nguoi dung: http://twitter.com/fotgot-password?token=token
+  async UpdateMe(user_id: string, payload: UpdateMeReqBody) {
+    const _payload = payload.date_of_birth ? { ...payload, date_of_birth: new Date(payload.date_of_birth) } : payload
+    const user = await databaseService.users.findOneAndUpdate(
+      { _id: new ObjectId(user_id) },
+      { $set: { ...(_payload as UpdateMeReqBody & { date_of_birth?: Date }) }, $currentDate: { updated_at: true } }
+    )
+  }
 }
 
 const usersService = new UsersService()
