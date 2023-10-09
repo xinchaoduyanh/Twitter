@@ -351,14 +351,14 @@ export const resetPasswordValidator = validate(
   )
 )
 //Day la 1 middleware synchronous
-export const verifiedUserValidator = async (req: Request, res: Response, next: NextFunction) => {
+export const verifiedUserValidator = (req: Request, res: Response, next: NextFunction) => {
   const { verify } = req.decoded_authorization as TokenPayload
   if (verify !== UserVerifyStatus.Verified) {
     return next(
       new ErrorWithStatus({
         message: USERS_MESSAGES.USER_NOT_VERIFY,
         status: HTTP_STATUS.FORBIDDEN
-      })
+      })  
     )
   }
   next()
