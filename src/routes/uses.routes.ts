@@ -11,11 +11,12 @@ import {
   getMeController,
   updateMeController,
   getProfileController,
-  followController
+  followController,
+  unfollowController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middleware'
 import {
-  FollowValidator,
+  followValidator,
   accessTokenValidator,
   emailVerifyTokenValidator,
   forgotPasswordValidator,
@@ -25,7 +26,8 @@ import {
   resetPasswordValidator,
   updateMeValidator,
   verifiedUserValidator,
-  verifyForgotPasswordTokenValidator
+  verifyForgotPasswordTokenValidator,
+  unfollowValidator
 } from '~/middlewares/users.middlewares'
 import { UpdateMeReqBody } from '~/models/requests/User.requests'
 import { wrapRequestHandler } from '~/utils/handlers'
@@ -148,7 +150,7 @@ usersRouter.patch(
 usersRouter.get('/:username', wrapRequestHandler(getProfileController))
 /**
  * Description:Follow user, Trong do nguoi dung phai duoc kiem tra AT va account phai verified
- * Path: /:username
+ * Path: /follow
  * Method: POST
  * Body : { followed_user_id:string}
  */
@@ -156,7 +158,19 @@ usersRouter.post(
   '/follow',
   accessTokenValidator,
   verifiedUserValidator,
-  FollowValidator,
+  followValidator,
   wrapRequestHandler(followController)
+)
+/**
+ * Description:Unfollowed
+ * Path: /follow/:usr_id
+ * Method: DELETE
+ */
+usersRouter.delete(
+  '/follow/:user_id',
+  accessTokenValidator,
+  verifiedUserValidator,
+  unfollowValidator,
+  wrapRequestHandler(unfollowController)
 )
 export default usersRouter
