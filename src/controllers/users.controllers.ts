@@ -4,6 +4,7 @@ import databaseService from '~/services/database.services'
 import usersService from '~/services/users.services'
 import { ParamsDictionary } from 'express-serve-static-core'
 import {
+  FollowedRequestBody,
   ForgotPasswordRequestBody,
   LoginRequestBody,
   LogoutRequestBody,
@@ -18,7 +19,7 @@ import { ObjectId } from 'mongodb'
 import { USERS_MESSAGES } from '~/constants/messages'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
-import { pick } from 'lodash'
+import { pick, result } from 'lodash'
 
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
@@ -146,10 +147,19 @@ export const updateMeController = async (
 
 export const getProfileController = async (req: Request<{ username: string }>, res: Response, next: NextFunction) => {
   const { username } = req.params
-  console.log(req.params)
   const user = await usersService.getProfile(username)
   return res.json({
     message: USERS_MESSAGES.GET_USER_PROFILE_SUCCESS,
     result: USERS_MESSAGES.USER_NOT_FOUND
   })
+}
+export const followController = async (
+  req: Request<ParamsDictionary, any, FollowedRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { followed_user_id } = req.body
+  const result = await usersService.follow(user_id, followed_user_id)
+  return res.json(result)
 }
