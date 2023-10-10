@@ -47,6 +47,9 @@ export const USERS_MESSAGES = {
   WEBSITE_LENGTH_MUST_BE_FROM_6_TO_200: 'Website length must be from 6 to 200',
   USER_NAME_MUST_BE_A_STRING: 'User name must be a string',
   USER_NAME_LENGTH_MUST_BE_FROM_1_TO_50: 'Website length must be from 1 to 50',
+  USERNAME_INVALID:
+    'Username must be 4-15 characters long and contain only letters,number, underscores and not only number',
+  USERNAME_EXISTED: 'Username existed',
   IMAGE_URL_MUST_BE_A_STRING: 'Cover photo must be a string',
   IMAGE_URL_LENGTH_MUST_BE_FROM_6_TO_400: 'Cover photo length must be from 6 to 400',
   USER_UPDATE_SUCCESS: 'User update success',
