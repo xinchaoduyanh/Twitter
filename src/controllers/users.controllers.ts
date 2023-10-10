@@ -143,3 +143,13 @@ export const updateMeController = async (
   const user = await usersService.UpdateMe(user_id, body)
   return res.json({ message: USERS_MESSAGES.USER_UPDATE_SUCCESS, result: user })
 }
+
+export const getProfileController = async (req: Request<{ username: string }>, res: Response, next: NextFunction) => {
+  const { username } = req.params
+  console.log(req.params)
+  const user = await usersService.getProfile(username)
+  return res.json({
+    message: USERS_MESSAGES.GET_USER_PROFILE_SUCCESS,
+    result: USERS_MESSAGES.USER_NOT_FOUND
+  })
+}

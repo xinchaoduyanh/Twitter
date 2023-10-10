@@ -49,5 +49,6 @@ export const USERS_MESSAGES = {
   USER_NAME_LENGTH_MUST_BE_FROM_1_TO_50: 'Website length must be from 1 to 50',
   IMAGE_URL_MUST_BE_A_STRING: 'Cover photo must be a string',
   IMAGE_URL_LENGTH_MUST_BE_FROM_6_TO_400: 'Cover photo length must be from 6 to 400',
-  USER_UPDATE_SUCCESS: 'User update success'
+  USER_UPDATE_SUCCESS: 'User update success',
+  GET_USER_PROFILE_SUCCESS: 'Get user profile success'
 } as const
