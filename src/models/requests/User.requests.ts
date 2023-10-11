@@ -45,6 +45,11 @@ export interface FollowedRequestBody {
 export interface UnFollowedRequestBody extends ParamsDictionary {
   user_id: string
 }
+export interface changePasswordRequestBody extends ParamsDictionary {
+  old_password: string
+  password: string
+  confirm_password: string
+}
 export interface TokenPayload extends JwtPayload {
   user_id: string
   token_type: TokenType

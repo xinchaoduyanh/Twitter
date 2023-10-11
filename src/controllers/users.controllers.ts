@@ -14,7 +14,8 @@ import {
   UnFollowedRequestBody,
   UpdateMeReqBody,
   VerifyEmailRequestBody,
-  VerifyForgotPasswordRequestBody
+  VerifyForgotPasswordRequestBody,
+  changePasswordRequestBody
 } from '~/models/requests/User.requests'
 import { ObjectId } from 'mongodb'
 import { USERS_MESSAGES } from '~/constants/messages'
@@ -168,5 +169,15 @@ export const unfollowController = async (req: Request<UnFollowedRequestBody>, re
   const { user_id } = req.decoded_authorization as TokenPayload
   const { user_id: followed_user_id } = req.params
   const result = await usersService.unfollow(user_id, followed_user_id)
+  return res.json(result)
+}
+export const changePasswordController = async (
+  req: Request<changePasswordRequestBody>,
+  res: Response,
+  next: NextFunction
+) => {
+  const { user_id } = req.decoded_authorization as TokenPayload
+  const { password } = req.body
+  const result = await usersService.changePassword(user_id, password)
   return res.json(result)
 }
