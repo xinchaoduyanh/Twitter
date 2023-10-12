@@ -22,7 +22,8 @@ import { USERS_MESSAGES } from '~/constants/messages'
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
 import { pick, result } from 'lodash'
-
+import { config } from 'dotenv'
+config()
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
   console.log(user)
@@ -34,7 +35,19 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
     result
   })
 }
-
+// export const oauthController = async (req: Request, res: Response) => {
+//   const { code } = req.query
+//   // console.log(code)
+//   const result = await usersService.oauth(code as string)
+//   const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK_URI}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}`
+//   return res.redirect(urlRedirect)
+// }
+export const oauthController = async (req: Request, res: Response) => {
+  const { code } = req.query
+  const result = await usersService.oauth(code as string)
+  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
+  return res.redirect(urlRedirect)
+}
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterRequestBody>, res: Response) => {
   const result = await usersService.register(req.body)
   return res.json({

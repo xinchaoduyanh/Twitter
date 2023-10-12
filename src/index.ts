@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'express'
 const app = express()
-const PORT = 3000
+const PORT = 4000
 import usersRouter from './routes/uses.routes'
 import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middleware'
