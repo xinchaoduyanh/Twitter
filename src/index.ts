@@ -2,10 +2,12 @@ import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'e
 const app = express()
 const PORT = 4000
 import usersRouter from './routes/uses.routes'
+import mediasRouter from './routes/medias.routes'
 import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 app.use(express.json())
 app.use('/users', usersRouter)
+app.use('/medias', mediasRouter)
 databaseService.connect()
 app.use(defaultErrorHandler)
 app.listen(PORT, () => {
