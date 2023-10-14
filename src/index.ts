@@ -10,9 +10,11 @@ import databaseService from './services/database.services'
 import { defaultErrorHandler } from './middlewares/error.middleware'
 import { initFolerUpload } from './utils/files'
 import argv from 'minimist'
+import { UPLOAD_DIR } from './constants/dir'
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
+app.use('/uploads', express.static(UPLOAD_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
 databaseService.connect()
 initFolerUpload()
 app.use(defaultErrorHandler)

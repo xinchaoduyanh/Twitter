@@ -14,8 +14,8 @@ class MediasService {
 
     await sharp(file.filepath).jpeg({ quality: 50 }).toFile(newPath)
     fs.unlinkSync(file.filepath)
-    console.log(isDevelopment)
-    console.log(isProduction)
+    // console.log(isDevelopment)
+    // console.log(isProduction)
 
     return isProduction
       ? `${process.env.HOST}/uploads/${newName}.jpg`
