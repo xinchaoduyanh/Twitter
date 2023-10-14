@@ -23,7 +23,7 @@ import { HTTP_STATUS } from '~/constants/httpStatus'
 import { UserVerifyStatus } from '~/constants/enums'
 import { pick, result } from 'lodash'
 import { config } from 'dotenv'
-import { UPLOAD_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import path from 'path'
 config()
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
