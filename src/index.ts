@@ -11,10 +11,12 @@ import { defaultErrorHandler } from './middlewares/error.middleware'
 import { initFolerUpload } from './utils/files'
 import argv from 'minimist'
 import { UPLOAD_DIR } from './constants/dir'
+import staticRouter from './routes/static.routes'
 app.use(express.json())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
-app.use('/uploads', express.static(UPLOAD_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
+app.use('/static', staticRouter)
+// app.use('/uploads', express.static(UPLOAD_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
 databaseService.connect()
 initFolerUpload()
 app.use(defaultErrorHandler)
