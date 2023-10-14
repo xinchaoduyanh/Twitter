@@ -196,4 +196,3 @@ export const changePasswordController = async (
   const result = await usersService.changePassword(user_id, password)
   return res.json(result)
 }
-
