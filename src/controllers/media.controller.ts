@@ -44,10 +44,10 @@ export const serveVideoStreamController = async (req: Request, res: Response, ne
   //Lay gia tri byte bat dau tu header range
   const start = Number(range.replace(/\D/g, ''))
   // Lay gia tri byte ket thuc tu header range
-  const end = Math.min(start + CHUNK_SIZE, videoSize)
+  const end = Math.min(start + CHUNK_SIZE, videoSize - 1)
   //Dung luong thuc te cua phan doan stream
   //Thuong day la Chunk size nhung neu la phan cuoi cung thi se nho hon chunk size
-  const contentLength = end - start
+  const contentLength = end - start + 1
   const contentType = mime.getType(videoPath) || 'video/*'
   const headers = {
     'Content-Range': `bytes ${start}-${end}/${videoSize}`,
