@@ -55,10 +55,10 @@ export const handleUploadVideo = async (req: Request) => {
     uploadDir: UPLOAD_VIDEO_DIR, // thư mục chứa file trên server
     maxFiles: 1,
     // keepExtensions: true, //
-    maxFileSize: 50 * 1024 * 1024, // 50MB
-    maxTotalFileSize: 50 * 1024 * 1024, // 50MB
+    maxFileSize: 500 * 1024 * 1024, // 50MB
+    maxTotalFileSize: 500 * 1024 * 1024, // 50MB
     filter: function ({ name, originalFilename, mimetype }) {
-      // const valid = 'videos' === name && Boolean(mimetype?.includes('video/'))
+      // const valid = 'video' === name && Boolean(mimetype?.includes('video') || mimetype?.includes('quicktime '))
       // if (!valid) {
       //   form.emit('error' as any, new Error('File type is not valid') as any)
       // }
