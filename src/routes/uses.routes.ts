@@ -14,7 +14,8 @@ import {
   followController,
   unfollowController,
   changePasswordController,
-  oauthController
+  oauthController,
+  refreshTokenController
 } from '~/controllers/users.controllers'
 import { filterMiddleware } from '~/middlewares/common.middleware'
 import {
@@ -33,6 +34,7 @@ import {
   changePasswordValidator
 } from '~/middlewares/users.middlewares'
 import { UpdateMeReqBody } from '~/models/requests/User.requests'
+import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import { wrapRequestHandler } from '~/utils/handlers'
 
 const usersRouter = Router()
@@ -65,6 +67,17 @@ usersRouter.post('/register', registerValidator, wrapRequestHandler(registerCont
  *
  */
 usersRouter.post('/logout', accessTokenValidator, refreshTokenValidator, wrapRequestHandler(logoutController))
+
+/**
+ * Description: refresh token
+ * Path: /refresh-token
+ * Method: POST
+ * Body: {refresh_token: string}
+ *
+ *
+ *
+ */
+usersRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(refreshTokenController))
 /**
  * Description: Verify email when user click
  * Path: /verify
