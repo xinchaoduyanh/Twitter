@@ -51,26 +51,34 @@ export const handleUploadImage = async (req: Request) => {
 }
 export const handleUploadVideo = async (req: Request) => {
   const formidable = (await import('formidable')).default
+  const nanoId = (await import('nanoid')).nanoid
+  const idName = nanoId(10)
+  console.log('idName', idName)
+  fs.mkdirSync(path.resolve(UPLOAD_VIDEO_DIR, idName), {
+    recursive: true // tạo thư mục cha nếu cha chưa tồn tại
+  })
   const form = formidable({
-    uploadDir: UPLOAD_VIDEO_DIR, // thư mục chứa file trên server
+    uploadDir: path.resolve(UPLOAD_VIDEO_DIR, idName), // thư mục chứa file trên server
     maxFiles: 1,
     // keepExtensions: true, //
     maxFileSize: 500 * 1024 * 1024, // 50MB
     maxTotalFileSize: 500 * 1024 * 1024, // 50MB
     filter: function ({ name, originalFilename, mimetype }) {
-      // const valid = 'video' === name && Boolean(mimetype?.includes('video') || mimetype?.includes('quicktime '))
-      // if (!valid) {
-      //   form.emit('error' as any, new Error('File type is not valid') as any)
-      // }
-      // return valid
-      return true
+      const valid = 'video' === name && Boolean(mimetype?.includes('video') || mimetype?.includes('quicktime '))
+      if (!valid) {
+        form.emit('error' as any, new Error('File type is not valid') as any)
+      }
+      return valid
+    },
+    filename: function () {
+      return idName
     }
   })
   return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       console.log('files', files)
-      console.log('fields', fields)
-      console.log('err', err)
+      // console.log('fields', fields)
+      // console.log('err', err)
       if (err) {
         return reject(err)
       }
