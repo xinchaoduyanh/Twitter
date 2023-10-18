@@ -12,7 +12,9 @@ import { initFolerUpload } from './utils/files'
 import argv from 'minimist'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
+import cors from 'cors'
 app.use(express.json())
+app.use(cors())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
