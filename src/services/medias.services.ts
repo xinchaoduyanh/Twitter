@@ -8,6 +8,40 @@ import { isDevelopment, isProduction } from '~/utils/config'
 import { MediaType } from '~/constants/enums'
 import { Media } from '~/models/Other'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
+
+class Queue {
+  items: string[]
+  encoding: boolean
+  constructor() {
+    this.items = []
+    this.encoding = false
+  }
+  enqueue(item: string) {
+    this.items.push(item)
+    this.processEncode()
+  }
+  async processEncode() {
+    if (this.encoding) return
+    if (this.items.length > 0) {
+      this.encoding = true
+      const videoPath = this.items[0]
+      try {
+        await encodeHLSWithMultipleVideoStreams(videoPath)
+        this.items.shift()
+        await fsPromises.unlink(videoPath)
+        console.log(`Encode video ${videoPath} thành công`)
+      } catch (err) {
+        console.log(`Encode video ${videoPath} thất bại`)
+        console.log(err)
+      }
+      this.encoding = false
+      this.processEncode()
+    } else {
+      console.log('Hết video để encode')
+    }
+  }
+}
+const queue = new Queue()
 class MediasService {
   async uploadImage(req: Request) {
     const files = await handleUploadImage(req)
@@ -48,9 +82,12 @@ class MediasService {
     // console.log(files)
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
-        await encodeHLSWithMultipleVideoStreams(file.filepath)
         const newName = getNameFromFullName(file.newFilename)
-        await fsPromises.unlink(file.filepath)
+
+        // await encodeHLSWithMultipleVideoStreams(file.filepath)
+        // await fsPromises.unlink(file.filepath)
+        queue.enqueue(file.filepath)
+        // await fsPromises.unlink(file.filepath)
         return {
           url: isProduction
             ? `${process.env.HOST}/static/video-hls/${newName}/master.m3u8`
