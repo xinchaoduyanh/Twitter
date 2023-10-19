@@ -5,9 +5,13 @@ import { UPLOAD_IMAGE_DIR, UPLOAD_IMAGE_TEMP_DIR } from '~/constants/dir'
 import fs from 'fs'
 import fsPromises from 'fs/promises'
 import { isDevelopment, isProduction } from '~/utils/config'
-import { MediaType } from '~/constants/enums'
+import { EncodingStatus, MediaType } from '~/constants/enums'
 import { Media } from '~/models/Other'
 import { encodeHLSWithMultipleVideoStreams } from '~/utils/video'
+import databaseService from './database.services'
+import VideoStatus from '~/models/schemas/VideoStatus.schemas'
+import { log } from 'console'
+import { ObjectId } from 'mongodb'
 
 class Queue {
   items: string[]
@@ -16,8 +20,15 @@ class Queue {
     this.items = []
     this.encoding = false
   }
-  enqueue(item: string) {
+  async enqueue(item: string) {
     this.items.push(item)
+    const idName = getNameFromFullName(item.split('/').pop() as string)
+    await databaseService.videoStatus.insertOne(
+      new VideoStatus({
+        name: idName,
+        status: EncodingStatus.Pending
+      })
+    )
     this.processEncode()
   }
   async processEncode() {
@@ -25,14 +36,60 @@ class Queue {
     if (this.items.length > 0) {
       this.encoding = true
       const videoPath = this.items[0]
+      const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+      await databaseService.videoStatus.updateOne(
+        {
+          name: idName
+        },
+        {
+          $set: {
+            status: EncodingStatus.Processing
+          },
+          $currentDate: {
+            updatedAt: true
+          }
+        }
+      )
+      this.processEncode()
       try {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         this.items.shift()
         await fsPromises.unlink(videoPath)
+        const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+        await databaseService.videoStatus.updateOne(
+          {
+            name: idName
+          },
+          {
+            $set: {
+              status: EncodingStatus.Success
+            },
+            $currentDate: {
+              updatedAt: true
+            }
+          }
+        )
         console.log(`Encode video ${videoPath} thành công`)
       } catch (err) {
-        console.log(`Encode video ${videoPath} thất bại`)
-        console.log(err)
+        const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+        await databaseService.videoStatus
+          .updateOne(
+            {
+              name: idName
+            },
+            {
+              $set: {
+                status: EncodingStatus.Failed
+              },
+              $currentDate: {
+                updatedAt: true
+              }
+            }
+          )
+          .catch((err) => {
+            console.log(err)
+          })
+        log(`Encode video ${videoPath} thất bại`)
       }
       this.encoding = false
       this.processEncode()
@@ -97,6 +154,12 @@ class MediasService {
       })
     )
     return result
+  }
+  async getVideoStatus(id: string) {
+    const data = await databaseService.videoStatus.findOne({
+      _id: new ObjectId(id)
+    })
+    return data
   }
 }
 
