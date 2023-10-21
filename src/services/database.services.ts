@@ -39,6 +39,21 @@ class DatabaseService {
     this.users.createIndex({ email: 1, password: 1 }, { unique: true })
     this.users.createIndex({ username: 1 }, { unique: true })
   }
+  indexRefreshToken() {
+    this.refreshToken.createIndex({ token: 1 }, { unique: true })
+    this.refreshToken.createIndex(
+      { exp: 1 },
+      {
+        expireAfterSeconds: 0
+      }
+    )
+  }
+  indexFollowers() {
+    this.followers.createIndex({ user_id: 1, followed_user_id: 1 }, { unique: true })
+  }
+  indexVideoStatus() {
+    this.videoStatus.createIndex({ name: 1 }, { unique: true })
+  }
 }
 const databaseService = new DatabaseService()
 export default databaseService

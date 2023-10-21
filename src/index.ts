@@ -21,6 +21,9 @@ app.use('/static', staticRouter)
 app.use('/uploads/video', express.static(UPLOAD_VIDEO_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
 databaseService.connect().then(() => {
   databaseService.indexUsers()
+  databaseService.indexRefreshToken()
+  databaseService.indexFollowers()
+  databaseService.indexVideoStatus()
 })
 initFolerUpload()
 app.use(defaultErrorHandler)

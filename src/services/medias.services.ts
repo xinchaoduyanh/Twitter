@@ -22,7 +22,10 @@ class Queue {
   }
   async enqueue(item: string) {
     this.items.push(item)
-    const idName = getNameFromFullName(item.split('/').pop() as string)
+    console.log(item)
+    const idName1 = getNameFromFullName(item.split('/').pop() as string)
+    const idName2 = idName1.split('\\')
+    const idName = idName2[idName2.length - 1]
     await databaseService.videoStatus.insertOne(
       new VideoStatus({
         name: idName,
@@ -36,7 +39,9 @@ class Queue {
     if (this.items.length > 0) {
       this.encoding = true
       const videoPath = this.items[0]
-      const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+      const idName1 = getNameFromFullName(videoPath.split('/').pop() as string)
+      const idName2 = idName1.split('\\')
+      const idName = idName2[idName2.length - 1]
       await databaseService.videoStatus.updateOne(
         {
           name: idName
@@ -55,7 +60,9 @@ class Queue {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         this.items.shift()
         await fsPromises.unlink(videoPath)
-        const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+        const idName1 = getNameFromFullName(videoPath.split('/').pop() as string)
+        const idName2 = idName1.split('\\')
+        const idName = idName2[idName2.length - 1]
         await databaseService.videoStatus.updateOne(
           {
             name: idName
@@ -71,7 +78,9 @@ class Queue {
         )
         console.log(`Encode video ${videoPath} thành công`)
       } catch (err) {
-        const idName = getNameFromFullName(videoPath.split('/').pop() as string)
+        const idName1 = getNameFromFullName(videoPath.split('/').pop() as string)
+        const idName2 = idName1.split('\\')
+        const idName = idName2[idName2.length - 1]
         await databaseService.videoStatus
           .updateOne(
             {
@@ -157,7 +166,7 @@ class MediasService {
   }
   async getVideoStatus(id: string) {
     const data = await databaseService.videoStatus.findOne({
-      _id: new ObjectId(id)
+      name: id
     })
     return data
   }
