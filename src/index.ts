@@ -19,7 +19,9 @@ app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
 app.use('/uploads/video', express.static(UPLOAD_VIDEO_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
-databaseService.connect()
+databaseService.connect().then(() => {
+  databaseService.indexUsers()
+})
 initFolerUpload()
 app.use(defaultErrorHandler)
 
