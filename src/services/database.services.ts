@@ -35,12 +35,18 @@ class DatabaseService {
   get videoStatus(): Collection<VideoStatus> {
     return this.db.collection(process.env.DB_VIDEO_STATUS_COLLECTION as string)
   }
-  indexUsers() {
-    this.users.createIndex({ email: 1, password: 1 }, { unique: true })
-    this.users.createIndex({ username: 1 }, { unique: true })
+  async indexUsers() {
+    const exist = await this.users.indexExists(['email_1_password_1', 'username_1'])
+    if (!exist) {
+      this.users.createIndex({ email: 1, password: 1 }, { unique: true })
+      this.users.createIndex({ username: 1 }, { unique: true })
+    }
   }
-  indexRefreshToken() {
+  async indexRefreshToken() {
+    const exist = await this.refreshToken.indexExists(['token_1'])
+    if (exist) return
     this.refreshToken.createIndex({ token: 1 }, { unique: true })
+
     this.refreshToken.createIndex(
       { exp: 1 },
       {
@@ -48,10 +54,14 @@ class DatabaseService {
       }
     )
   }
-  indexFollowers() {
+  async indexFollowers() {
+    const exist = await this.followers.indexExists(['user_id_1_followed_user_id_1'])
+    if (exist) return
     this.followers.createIndex({ user_id: 1, followed_user_id: 1 }, { unique: true })
   }
-  indexVideoStatus() {
+  async indexVideoStatus() {
+    const exist = await this.videoStatus.indexExists(['name_1'])
+    if (exist) return
     this.videoStatus.createIndex({ name: 1 }, { unique: true })
   }
 }
