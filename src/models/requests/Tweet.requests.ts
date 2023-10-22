@@ -1,4 +1,5 @@
 import { TweetAudience, TweetType } from '~/constants/enums'
+import { Media } from '../Other'
 
 export interface CreateTweetRequestBody {
   type: TweetType
@@ -7,5 +8,5 @@ export interface CreateTweetRequestBody {
   parent_id: null | string
   hashtags: string[]
   mentions: string[]
-  medias: string[]
+  medias: Media[]
 }
