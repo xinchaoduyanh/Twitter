@@ -60,7 +60,7 @@ export const createTweetValidator = validate(
       custom: {
         options: (value, { req }) => {
           //Yeu cau moi phan tu trong mang hashtags la string
-          if (!value.every((item: any) => typeof item !== 'string')) {
+          if (!value.every((item: any) => typeof item === 'string')) {
             throw new Error(TWEETS_MESSAGES.HASHTAGS_MUST_BE_ARRAY_OF_STRING)
           }
           return true

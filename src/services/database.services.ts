@@ -5,6 +5,7 @@ import RefreshToken from '~/models/schemas/RefreshToken.schemas'
 import Follower from '~/models/schemas/Follower.schemas'
 import VideoStatus from '~/models/schemas/VideoStatus.schemas'
 import Tweet from '~/models/schemas/Tweet.schemas'
+import { HashTag } from '~/models/schemas/HashTag.schemas'
 dotenv.config()
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
 // const uri = `mongodb+srv://vuduyanh1912:vuduyanh1912@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
@@ -38,6 +39,9 @@ class DatabaseService {
   }
   get tweets(): Collection<Tweet> {
     return this.db.collection(process.env.DB_TWEETS_COLLECTION as string)
+  }
+  get hashTags(): Collection<HashTag> {
+    return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
   }
   async indexUsers() {
     const exist = await this.users.indexExists(['email_1_password_1', 'username_1'])
