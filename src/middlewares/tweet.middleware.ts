@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash'
 import { ObjectId } from 'mongodb'
 import { MediaType, TweetAudience, TweetType } from '~/constants/enums'
 import { TWEETS_MESSAGES } from '~/constants/messages'
+import databaseService from '~/services/database.services'
 import { NumberEnumToArray } from '~/utils/common'
 import { validate } from '~/utils/validation'
 
@@ -90,6 +91,24 @@ export const createTweetValidator = validate(
             })
           ) {
             throw new Error(TWEETS_MESSAGES.MEDIAS_MUST_BE_ARRAY_OF_MEDIA)
+          }
+          return true
+        }
+      }
+    }
+  })
+)
+export const tweetIdValidator = validate(
+  checkSchema({
+    tweet_id: {
+      isMongoId: {
+        errorMessage: TWEETS_MESSAGES.TWEET_ID_MUST_BE_A_VALID_TWEET_ID
+      },
+      custom: {
+        options: async (value, { req }) => {
+          const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
+          if (!tweet) {
+            throw new Error(TWEETS_MESSAGES.TWEET_NOT_FOUND)
           }
           return true
         }
