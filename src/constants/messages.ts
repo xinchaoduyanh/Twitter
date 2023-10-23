@@ -79,7 +79,9 @@ export const TWEETS_MESSAGES = {
   MENTIONS_MUST_BE_ARRAY_OF_USER_ID: 'Mentions must be array of user id',
   MEDIAS_MUST_BE_ARRAY_OF_MEDIA: 'Medias must be array of media',
   TWEET_ID_MUST_BE_A_VALID_TWEET_ID: 'Tweet id must be a valid tweet id',
-  TWEET_NOT_FOUND: 'Tweet not found'
+  TWEET_NOT_FOUND: 'Tweet not found',
+  CREATE_TWEET_SUCCESSFULLY: 'Create tweet successfully',
+  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully'
 }
 export const BOOKMARKS_MESSAGES = {
   BOOKARK_TWEET_SUCCESS: 'Bookmark tweet success',
