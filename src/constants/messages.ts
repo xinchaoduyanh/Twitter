@@ -81,7 +81,10 @@ export const TWEETS_MESSAGES = {
   TWEET_ID_MUST_BE_A_VALID_TWEET_ID: 'Tweet id must be a valid tweet id',
   TWEET_NOT_FOUND: 'Tweet not found',
   CREATE_TWEET_SUCCESSFULLY: 'Create tweet successfully',
-  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully'
+  GET_TWEET_SUCCESSFULLY: 'Get tweet successfully',
+  USER_NOT_LOGGED_IN_TO_VIEW_THIS_TWEET: 'User not logged in to view this tweet',
+  AUTHOR_NOT_FOUND: 'Author not found',
+  USER_NOT_IN_TWITTER_CIRCLE_OF_AUTHOR: 'User not in twitter circle of author'
 }
 export const BOOKMARKS_MESSAGES = {
   BOOKARK_TWEET_SUCCESS: 'Bookmark tweet success',
