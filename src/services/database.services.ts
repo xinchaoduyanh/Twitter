@@ -7,6 +7,7 @@ import VideoStatus from '~/models/schemas/VideoStatus.schemas'
 import Tweet from '~/models/schemas/Tweet.schemas'
 import { HashTag } from '~/models/schemas/HashTag.schemas'
 import Bookmark from '~/models/schemas/Bookmarks.schemas'
+import Like from '~/models/schemas/Likes.schemas'
 
 dotenv.config()
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
@@ -45,8 +46,11 @@ class DatabaseService {
   get hashTags(): Collection<HashTag> {
     return this.db.collection(process.env.DB_HASHTAGS_COLLECTION as string)
   }
-  get bookmarks(): Collection<Bookmark> {
+  get bookmarks(): Collection<Like> {
     return this.db.collection(process.env.DB_BOOKMARKS_COLLECTION as string)
+  }
+  get likes(): Collection<Bookmark> {
+    return this.db.collection(process.env.DB_LIKES_COLLECTION as string)
   }
 
   async indexUsers() {

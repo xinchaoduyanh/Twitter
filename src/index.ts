@@ -15,6 +15,7 @@ import staticRouter from './routes/static.routes'
 import cors from 'cors'
 import tweetsRouter from './routes/tweet.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
+import likesRouter from './routes/likes.routes'
 app.use(express.json())
 app.use(cors())
 app.use('/users', usersRouter)
@@ -23,6 +24,7 @@ app.use('/static', staticRouter)
 app.use('/uploads/video', express.static(UPLOAD_VIDEO_DIR)) // tạo đường dẫn tĩnh đến thư mục upload
 app.use('/tweets/', tweetsRouter)
 app.use('/bookmarks/', bookmarksRouter)
+app.use('/likes/', likesRouter)
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshToken()

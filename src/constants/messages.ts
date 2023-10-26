@@ -90,3 +90,7 @@ export const BOOKMARKS_MESSAGES = {
   BOOKARK_TWEET_SUCCESS: 'Bookmark tweet success',
   UNBOOKARK_TWEET_SUCCESS: 'Unbookmark tweet success'
 }
+export const LIKES_MESSAGES = {
+  LIKE_TWEET_SUCCESS: 'Like tweet success',
+  UNLIKE_TWEET_SUCCESS: 'Unlike tweet success'
+}
