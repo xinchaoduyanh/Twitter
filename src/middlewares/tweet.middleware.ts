@@ -6,6 +6,7 @@ import { MediaType, TweetAudience, TweetType, UserVerifyStatus } from '~/constan
 import { HTTP_STATUS } from '~/constants/httpStatus'
 import { TWEETS_MESSAGES } from '~/constants/messages'
 import { ErrorWithStatus } from '~/models/Errors'
+import { TokenPayload } from '~/models/requests/User.requests'
 import Tweet from '~/models/schemas/Tweet.schemas'
 import databaseService from '~/services/database.services'
 import { NumberEnumToArray } from '~/utils/common'
@@ -111,11 +112,117 @@ export const tweetIdValidator = validate(
       },
       custom: {
         options: async (value, { req }) => {
-          const tweet = await databaseService.tweets.findOne({ _id: new ObjectId(value) })
+          const [tweet] = await databaseService.tweets
+            .aggregate<Tweet>([
+              {
+                $match: {
+                  _id: new ObjectId('653a0f8e6b303cd8f0029501')
+                }
+              },
+              {
+                $lookup: {
+                  from: 'users',
+                  localField: 'mentions',
+                  foreignField: '_id',
+                  as: 'mentions'
+                }
+              },
+              {
+                $addFields: {
+                  mentions: {
+                    $map: {
+                      input: '$mentions',
+                      as: 'mention',
+                      in: {
+                        _id: '$$mention._id',
+                        name: '$$mention.name',
+                        username: '$$mention.username',
+                        email: '$$mention.email'
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                $lookup: {
+                  from: 'bookmarks',
+                  localField: '_id',
+                  foreignField: 'tweet_id',
+                  as: 'bookmarks'
+                }
+              },
+              {
+                $lookup: {
+                  from: 'likes',
+                  localField: '_id',
+                  foreignField: 'tweet_id',
+                  as: 'likes'
+                }
+              },
+              {
+                $lookup: {
+                  from: 'tweets',
+                  localField: '_id',
+                  foreignField: 'parent_id',
+                  as: 'tweets_children'
+                }
+              },
+              {
+                $addFields: {
+                  bookmarks_count: {
+                    $size: '$bookmarks'
+                  },
+                  likes_count: {
+                    $size: '$likes'
+                  },
+                  retweet_count: {
+                    $size: {
+                      $filter: {
+                        input: '$tweets_children',
+                        as: 'item',
+                        cond: {
+                          $eq: ['$$item.type', 1]
+                        }
+                      }
+                    }
+                  },
+                  comment_count: {
+                    $size: {
+                      $filter: {
+                        input: '$tweets_children',
+                        as: 'item',
+                        cond: {
+                          $eq: ['$$item.type', 2]
+                        }
+                      }
+                    }
+                  },
+                  quote_count: {
+                    $size: {
+                      $filter: {
+                        input: '$tweets_children',
+                        as: 'item',
+                        cond: {
+                          $eq: ['$$item.type', 3]
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                $project: {
+                  tweets_children: 0
+                }
+              }
+            ])
+            .toArray()
           if (!tweet) {
             throw new Error(TWEETS_MESSAGES.TWEET_NOT_FOUND)
           }
           ;(req as Request).tweet = tweet
+          // console.log(tweet)
+
           return true
         }
       }
@@ -142,8 +249,11 @@ export const audienceValidator = wrapRequestHandler(async (req: Request, res: Re
       })
     }
     // Kiem tra xem nguoi dung co trong TwitterCircle cua nguoi dang tweet hay khong hoac co phai la nguoi dang tweet khong
+
     if (
-      !author.twitter_circle.includes(req.decoded_authorization._id) &&
+      !author.twitter_circle.some((item) =>
+        item.equals(new ObjectId((req.decoded_authorization as TokenPayload).user_id))
+      ) &&
       author._id.toString() !== req.decoded_authorization.user_id
     ) {
       throw new ErrorWithStatus({
