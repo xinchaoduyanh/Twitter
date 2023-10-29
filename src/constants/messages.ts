@@ -85,7 +85,9 @@ export const TWEETS_MESSAGES = {
   USER_NOT_LOGGED_IN_TO_VIEW_THIS_TWEET: 'User not logged in to view this tweet',
   AUTHOR_NOT_FOUND: 'Author not found',
   USER_NOT_IN_TWITTER_CIRCLE_OF_AUTHOR: 'User not in twitter circle of author',
-  GET_TWEET_CHILDREN_SUCCESSFULLY: 'Get tweet children successfully'
+  GET_TWEET_CHILDREN_SUCCESSFULLY: 'Get tweet children successfully',
+  LIMIT_MUST_BE_A_NUMBER_BETWEEN_1_AND_100: 'Limit must be a number between 1 and 100',
+  PAGE_MUST_BE_A_NUMBER_GREATER_THAN_0: 'Page must be a number greater than 0',
 }
 export const BOOKMARKS_MESSAGES = {
   BOOKARK_TWEET_SUCCESS: 'Bookmark tweet success',

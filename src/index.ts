@@ -25,6 +25,8 @@ app.use('/uploads/video', express.static(UPLOAD_VIDEO_DIR)) // tạo đường d
 app.use('/tweets/', tweetsRouter)
 app.use('/bookmarks/', bookmarksRouter)
 app.use('/likes/', likesRouter)
+
+
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshToken()

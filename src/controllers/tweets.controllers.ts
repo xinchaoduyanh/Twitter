@@ -1,5 +1,5 @@
 import { Response, Request } from 'express'
-import { CreateTweetRequestBody } from '~/models/requests/Tweet.requests'
+import { CreateTweetRequestBody, RequestTweetParams, TweetQuery } from '~/models/requests/Tweet.requests'
 import { LoginRequestBody, TokenPayload } from '~/models/requests/User.requests'
 import { ParamsDictionary } from 'express-serve-static-core'
 import { tweetService } from '~/services/tweet.servies'
@@ -16,7 +16,7 @@ export const createTweetController = async (
     result
   })
 }
-export const getTweetController = async (req: Request, res: Response) => {
+export const getTweetController = async (req: Request<RequestTweetParams, any, any, TweetQuery>, res: Response) => {
   const result = await tweetService.increaseViews(req.params.tweet_id, req.decoded_authorization?.user_id)
   const tweet = {
     ...req.tweet,
