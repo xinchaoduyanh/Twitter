@@ -16,7 +16,7 @@ import cors from 'cors'
 import tweetsRouter from './routes/tweet.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likesRouter from './routes/likes.routes'
-import './utils/fake'
+// import './utils/fake'
 
 app.use(express.json())
 app.use(cors())

@@ -13,7 +13,10 @@ export interface CreateTweetRequestBody {
 export interface RequestTweetParams extends ParamsDictionary {
   tweet_id: string
 }
-export interface TweetQuery extends Query {
+export interface TweetQuery extends Pagination {
+  tweet_type: string
+}
+export interface Pagination extends Query {
   limit: string
   page: string
   tweet_type: string
