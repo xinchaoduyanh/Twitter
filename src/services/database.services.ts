@@ -82,6 +82,12 @@ class DatabaseService {
     if (exist) return
     this.videoStatus.createIndex({ name: 1 }, { unique: true })
   }
+  async indexTweet() {
+    const exist = await this.tweets.indexExists(['content_text'])
+    if (!exist) {
+      this.tweets.createIndex({ content: 'text' }, { default_language: 'none' })
+    }
+  }
 }
 const databaseService = new DatabaseService()
 export default databaseService

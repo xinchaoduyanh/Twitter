@@ -34,6 +34,7 @@ databaseService.connect().then(() => {
   databaseService.indexRefreshToken()
   databaseService.indexFollowers()
   databaseService.indexVideoStatus()
+  databaseService.indexTweet()
 })
 initFolerUpload()
 app.use(defaultErrorHandler)
