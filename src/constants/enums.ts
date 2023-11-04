@@ -15,6 +15,10 @@ export enum MediaType {
   Video,
   HLS
 }
+export enum MediaQueryType {
+  Image = 'image',
+  Video = 'video'
+}
 
 export enum EncodingStatus {
   Pending, // đang chờ xử lý
