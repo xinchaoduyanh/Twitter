@@ -26,6 +26,7 @@ import { pick, result } from 'lodash'
 import { config } from 'dotenv'
 import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import path from 'path'
+import { sendForgotPasswordEmail } from '~/utils/email'
 config()
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
@@ -122,7 +123,7 @@ export const resendVerifyEmailController = async (req: Request, res: Response, n
       message: USERS_MESSAGES.EMAIL_IS_ALREADY_VERIFY_BEFORE
     })
   }
-  const result = await usersService.resendVerifyEmail(user_id)
+  const result = await usersService.resendVerifyEmail(user_id, user.email_verify_token)
   return res.json({
     message: USERS_MESSAGES.EMAIL_VERIFY_SUCCESS,
     result
@@ -133,8 +134,12 @@ export const forgotPasswordController = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { _id, verify } = req.user as User
-  const result = await usersService.forgotPassword({ user_id: (_id as ObjectId).toString(), verify: verify })
+  const { _id, verify, email } = req.user as User
+  const result = await usersService.forgotPassword({
+    user_id: (_id as ObjectId).toString(),
+    verify: verify,
+    email: email
+  })
   return res.json(result)
 }
 export const verifyforgotPasswordController = async (
@@ -142,6 +147,7 @@ export const verifyforgotPasswordController = async (
   res: Response,
   next: NextFunction
 ) => {
+ 
   return res.json({
     message: USERS_MESSAGES.VERIFY_FORGOT_PASSWORD_SUCCESS
   })

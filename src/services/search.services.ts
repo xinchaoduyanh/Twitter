@@ -10,13 +10,15 @@ class SearchService {
     limit,
     content,
     user_id,
-    media_type
+    media_type,
+    followed_user
   }: {
     page: number
     limit: number
     content: string
     user_id: string
     media_type: MediaQueryType
+    followed_user: string
   }) {
     const $match: any = {
       $text: {
@@ -25,15 +27,34 @@ class SearchService {
     }
     if (media_type) {
       if (media_type === MediaQueryType.Image) {
-        $match['type'] = MediaType.Image
+        $match['medias.type'] = MediaType.Image
       } else if (media_type === MediaQueryType.Video) {
-        $match['type'] = {
+        $match['medias.type'] = {
           $in: [MediaType.Video, MediaType.HLS]
         }
       }
     }
-    console.log('1', $match)
+    if (followed_user === '1') {
+      const followed_user_ids = await databaseService.followers
+        .find(
+          {
+            user_id: new ObjectId(user_id)
+          },
+          {
+            projection: {
+              followed_user_id: 1,
+              _id: 0
+            }
+          }
+        )
+        .toArray()
+      const ids = followed_user_ids.map((item) => item.followed_user_id as ObjectId)
+      ids.push(new ObjectId(user_id))
 
+      $match['user_id'] = {
+        $in: ids
+      }
+    }
     const [tweets, total] = await Promise.all([
       databaseService.tweets
         .aggregate([
@@ -257,7 +278,7 @@ class SearchService {
     })
     return {
       tweets,
-      total
+      total: total[0]?.total || 0
     }
   }
 }

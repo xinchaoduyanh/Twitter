@@ -90,6 +90,14 @@ usersRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(ref
  */
 usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController))
 /**
+ * Description. Verify email when user client click on the link in email
+ * Path: /resend-verify-email
+ * Method: POST
+ * Header: { Authorization: Bearer <access_token> }
+ * Body: {}
+ */
+usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
+/**
  * Description:Submit email when user click to reset the password
  * Path: /forgot-password
  * Method: POST
@@ -99,6 +107,7 @@ usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(
  *
  *
  */
+
 usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 /**
  * Description:Validate the verify forgot Token from  user

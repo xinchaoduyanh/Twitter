@@ -88,7 +88,7 @@ export const TWEETS_MESSAGES = {
   GET_TWEET_CHILDREN_SUCCESSFULLY: 'Get tweet children successfully',
   LIMIT_MUST_BE_A_NUMBER_BETWEEN_1_AND_100: 'Limit must be a number between 1 and 100',
   PAGE_MUST_BE_A_NUMBER_GREATER_THAN_0: 'Page must be a number greater than 0',
-  GET_NEW_FEED_SUCCESSFULLY: 'Get new feed successfully',
+  GET_NEW_FEED_SUCCESSFULLY: 'Get new feed successfully'
 }
 export const BOOKMARKS_MESSAGES = {
   BOOKARK_TWEET_SUCCESS: 'Bookmark tweet success',
@@ -97,4 +97,10 @@ export const BOOKMARKS_MESSAGES = {
 export const LIKES_MESSAGES = {
   LIKE_TWEET_SUCCESS: 'Like tweet success',
   UNLIKE_TWEET_SUCCESS: 'Unlike tweet success'
+}
+export const SEARCH_MESSAGES = {
+  SEARCH_SUCCESS: 'Search success',
+  SEARCH_FAILED: 'Search failed',
+  CONTENT_MUST_BE_A_STRING: 'Content must be a string',
+  FOLLOWED_USER_MUST_BE_A_STRING: 'Followed user must be a string'
 }

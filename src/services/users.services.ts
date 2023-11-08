@@ -13,6 +13,7 @@ import { HTTP_STATUS } from '~/constants/httpStatus'
 import Follower from '~/models/schemas/Follower.schemas'
 import axios from 'axios'
 import { decode } from 'punycode'
+import { sendForgotPasswordEmail, sendRegisterVerifyEmail, sendVerifyEmail } from '~/utils/email'
 config()
 class UsersService {
   private signAccessToken({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
@@ -117,9 +118,9 @@ class UsersService {
         iat: decoded_refresh_token.iat
       })
     )
-    // console.log('veri:', email_verify_token)
+    //Thuc hien viec send email
+    await sendRegisterVerifyEmail(payload.email, email_verify_token)
 
-    // console.log('email ne: ', email_verify_token)
     return {
       access_token,
       refresh_token
@@ -289,7 +290,7 @@ class UsersService {
       refresh_token
     }
   }
-  async resendVerifyEmail(user_id: string) {
+  async resendVerifyEmail(user_id: string, email: string) {
     const email_verify_token = await this.signEmailVerifyToken({ user_id, verify: UserVerifyStatus.Unverified })
     // console.log('email-verify-again: ', email_verify_token)
     await databaseService.users.updateOne(
@@ -303,16 +304,17 @@ class UsersService {
         }
       }
     )
+    await sendRegisterVerifyEmail(email, email_verify_token)
     return {
       message: USERS_MESSAGES.RESEND_VERIFY_EMAIL_SUCCESS
     }
   }
-  async forgotPassword({ user_id, verify }: { user_id: string; verify: UserVerifyStatus }) {
+  async forgotPassword({ user_id, verify, email }: { user_id: string; verify: UserVerifyStatus; email: string }) {
     const token = await this.signForgotPasswordToken({ user_id, verify })
     await databaseService.users.updateOne({ _id: new ObjectId(user_id) }, [
       { $set: { forgot_password_token: token, updated_at: '$$NOW' } }
     ])
-    console.log('fotgotpassword token', token)
+    await sendForgotPasswordEmail(email, token)
     return {
       message: USERS_MESSAGES.CHECK_EMAIL_TO_RESET_PASSWORD
     }
