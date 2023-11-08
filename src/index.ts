@@ -29,6 +29,7 @@ app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
+import './utils/s3'
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshToken()
