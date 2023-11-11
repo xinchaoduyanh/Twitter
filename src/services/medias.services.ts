@@ -12,7 +12,8 @@ import databaseService from './database.services'
 import VideoStatus from '~/models/schemas/VideoStatus.schemas'
 import { log } from 'console'
 import { ObjectId } from 'mongodb'
-
+import { uploadImageToS3 } from '~/utils/s3'
+import mime from 'mime'
 class Queue {
   items: string[]
   encoding: boolean
@@ -117,7 +118,13 @@ class MediasService {
         const newName = getNameFromFullName(file.newFilename)
         const newPath = UPLOAD_IMAGE_DIR + '/' + newName + '.jpg'
         await sharp(file.filepath).jpeg({ quality: 50 }).toFile(newPath)
-        fs.unlinkSync(file.filepath)
+        uploadImageToS3({
+          fileName: newName + '.jpg',
+          filePath: newPath,
+          contentType: mime.getType(newPath) || 'image/*'
+        })
+        await Promise.all([fsPromises.unlink(file.filepath), fsPromises.unlink(newPath)])
+
         return {
           url: isProduction
             ? `${process.env.HOST}/uploads/${newName}.jpg`

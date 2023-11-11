@@ -12,8 +12,8 @@ const mediasRouter = Router()
  */
 mediasRouter.post(
   '/upload-image',
-  // accessTokenValidator,
-  // verifiedUserValidator,
+  accessTokenValidator,
+  verifiedUserValidator,
   wrapRequestHandler(uploadImageController)
 )
 /*
@@ -36,8 +36,8 @@ mediasRouter.post(
  */
 mediasRouter.post(
   '/upload-video-hls',
-  // accessTokenValidator,
-  // verifiedUserValidator,
+  accessTokenValidator,
+  verifiedUserValidator,
   wrapRequestHandler(uploadVideoHLSController)
 )
 /*
@@ -48,8 +48,8 @@ mediasRouter.post(
  */
 mediasRouter.get(
   '/video-status/:id',
-  // accessTokenValidator,
-  // verifiedUserValidator,
+  accessTokenValidator,
+  verifiedUserValidator,
   wrapRequestHandler(VideoStatusController)
 )
 export default mediasRouter
