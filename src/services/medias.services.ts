@@ -14,6 +14,7 @@ import { log } from 'console'
 import { ObjectId } from 'mongodb'
 import { uploadImageToS3 } from '~/utils/s3'
 import mime from 'mime'
+import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3/dist-types/commands'
 class Queue {
   items: string[]
   encoding: boolean
@@ -118,17 +119,15 @@ class MediasService {
         const newName = getNameFromFullName(file.newFilename)
         const newPath = UPLOAD_IMAGE_DIR + '/' + newName + '.jpg'
         await sharp(file.filepath).jpeg({ quality: 50 }).toFile(newPath)
-        uploadImageToS3({
-          fileName: newName + '.jpg',
+        const s3Result = await uploadImageToS3({
+          fileName: 'images/' + newName + '.jpg',
           filePath: newPath,
           contentType: mime.getType(newPath) || 'image/*'
         })
         await Promise.all([fsPromises.unlink(file.filepath), fsPromises.unlink(newPath)])
 
         return {
-          url: isProduction
-            ? `${process.env.HOST}/uploads/${newName}.jpg`
-            : `http://localhost:${process.env.PORT}/static/image/${newName}.jpg`,
+          url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
           type: MediaType.Image
         }
       })
@@ -137,17 +136,20 @@ class MediasService {
   }
   async uploadVideo(req: Request) {
     const files = await handleUploadVideo(req)
-    // console.log('file', files)
-    console.log(files)
-    const result: Media[] = files.map((file) => {
-      const { newFilename } = file
-      return {
-        url: isProduction
-          ? `${process.env.HOST}/uploads/${newFilename}`
-          : `http://localhost:${process.env.PORT}/static/video/${newFilename}`,
-        type: MediaType.Video
-      }
-    })
+    const result: Media[] = await Promise.all(
+      files.map(async (file) => {
+        const s3Result = await uploadImageToS3({
+          fileName: 'videos/' + file.newFilename,
+          filePath: file.filepath,
+          contentType: mime.getType(file.filepath) || 'video/*'
+        })
+        fsPromises.unlink(file.filepath)
+        return {
+          url: (s3Result as CompleteMultipartUploadCommandOutput).Location as string,
+          type: MediaType.Image
+        }
+      })
+    )
     return result
   }
   async uploadVideoHLS(req: Request) {

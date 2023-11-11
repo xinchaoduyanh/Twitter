@@ -33,7 +33,7 @@ export const uploadImageToS3 = async ({
       /*...*/
     ], // optional tags
     queueSize: 4, // optional concurrency configuration
-    partSize: 1024 * 1024 * 5, // optional size of each part, in bytes, at least 5MB
+    partSize: 1024 * 1024 * 10, // optional size of each part, in bytes, at least 10MB
     leavePartsOnError: false // optional manually handle dropped parts
   })
   return parallelUploads3.done()
