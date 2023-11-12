@@ -109,3 +109,17 @@ export const getExtensionFromFullName = (filename: string) => {
   const name = filename.split('.')
   return name.pop()
 }
+
+export const getFiles = (dir: string, file: string[] = []) => {
+  const fileList = fs.readdirSync(dir)
+  fileList.forEach((fileItem) => {
+    const filePath = path.join(dir, fileItem)
+    const stat = fs.lstatSync(filePath)
+    if (stat.isDirectory()) {
+      getFiles(filePath, file)
+    } else {
+      file.push(filePath)
+    }
+  })
+  return file
+}

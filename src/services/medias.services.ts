@@ -1,7 +1,7 @@
 import { Request } from 'express'
-import { getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/files'
+import { getFiles, getNameFromFullName, handleUploadImage, handleUploadVideo } from '~/utils/files'
 import sharp from 'sharp'
-import { UPLOAD_IMAGE_DIR, UPLOAD_IMAGE_TEMP_DIR } from '~/constants/dir'
+import { UPLOAD_IMAGE_DIR, UPLOAD_IMAGE_TEMP_DIR, UPLOAD_VIDEO_DIR } from '~/constants/dir'
 import fs from 'fs'
 import fsPromises from 'fs/promises'
 import { isDevelopment, isProduction } from '~/utils/config'
@@ -15,6 +15,7 @@ import { ObjectId } from 'mongodb'
 import { uploadImageToS3 } from '~/utils/s3'
 import mime from 'mime'
 import { CompleteMultipartUploadCommandOutput } from '@aws-sdk/client-s3/dist-types/commands'
+import path from 'path'
 class Queue {
   items: string[]
   encoding: boolean
@@ -62,9 +63,15 @@ class Queue {
         await encodeHLSWithMultipleVideoStreams(videoPath)
         this.items.shift()
         await fsPromises.unlink(videoPath)
-        const idName1 = getNameFromFullName(videoPath.split('/').pop() as string)
-        const idName2 = idName1.split('\\')
-        const idName = idName2[idName2.length - 1]
+        const files = getFiles(path.resolve(UPLOAD_VIDEO_DIR, idName))
+        files.forEach(async (file) => {
+          const s3Result = await uploadImageToS3({
+            fileName: 'videos/' + idName + '/' + file,
+            filePath: path.resolve(UPLOAD_VIDEO_DIR, idName, file),
+            contentType: mime.getType(path.resolve(UPLOAD_VIDEO_DIR, idName, file)) || 'video/*'
+          })
+          await fsPromises.unlink(path.resolve(UPLOAD_VIDEO_DIR, idName, file))
+        })
         await databaseService.videoStatus.updateOne(
           {
             name: idName
