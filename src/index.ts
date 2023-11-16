@@ -30,6 +30,11 @@ app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
 import './utils/s3'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
+
+const httpServer = createServer(app)
+
 databaseService.connect().then(() => {
   databaseService.indexUsers()
   databaseService.indexRefreshToken()
@@ -40,36 +45,22 @@ databaseService.connect().then(() => {
 initFolerUpload()
 app.use(defaultErrorHandler)
 
-
-app.listen(PORT, () => {
-  console.log('yarh im coming hehe')
+const io = new Server(httpServer, {
+  /* options */
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
 })
 
-// import { MongoClient } from 'mongodb'
-// import dotenv from 'dotenv'
-// dotenv.config()
-// const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
+io.on('connection', (socket) => {
+  // ...
+  console.log(`socket ${socket.id} connected`)
+  socket.on('disconnect', () => {
+    console.log(`socket ${socket.id} disconnected`)
+  })
+})
 
-// const client = new MongoClient(uri)
-
-// async function createUsers() {
-//   try {
-//     await client.connect()
-//     const database = client.db('earth')
-//     const collection = database.collection('user')
-//     for (let i = 1; i <= 1000; i++) {
-//       const name = `user${i}`
-//       const age = Math.floor(Math.random() * 100) + 1
-//       const gender = i % 2 === 0 ? 'nam' : 'nữ'
-//       const user = { name, age, gender }
-//       await collection.insertOne(user)
-//     }
-//     console.log('Inserted 1000 users into the database')
-//   } catch (err) {
-//     console.error(err)
-//   } finally {
-//     await client.close()
-//   }
-// }
-
-// createUsers()
+httpServer.listen(PORT, () => {
+  console.log('yarh im coming hehe')
+})
