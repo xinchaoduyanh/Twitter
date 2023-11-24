@@ -8,6 +8,7 @@ import Tweet from '~/models/schemas/Tweet.schemas'
 import { HashTag } from '~/models/schemas/HashTag.schemas'
 import Bookmark from '~/models/schemas/Bookmarks.schemas'
 import Like from '~/models/schemas/Likes.schemas'
+import Conversation from '~/models/schemas/Converstation.schemas'
 
 dotenv.config()
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
@@ -51,6 +52,9 @@ class DatabaseService {
   }
   get likes(): Collection<Bookmark> {
     return this.db.collection(process.env.DB_LIKES_COLLECTION as string)
+  }
+  get Conversation(): Collection<Conversation> {
+    return this.db.collection(process.env.DB_CONVERSATION_COLLECTION as string)
   }
 
   async indexUsers() {

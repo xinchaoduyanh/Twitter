@@ -32,6 +32,9 @@ app.use('/search', searchRouter)
 import './utils/s3'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
+import { da } from '@faker-js/faker'
+import { ObjectId } from 'mongodb'
+import Conversation from './models/schemas/Converstation.schemas'
 
 const httpServer = createServer(app)
 
@@ -64,13 +67,20 @@ io.on('connection', (socket) => {
   users[user_id] = {
     socket_id: socket.id
   }
-  console.log(users)
-  socket.on('private message', ({ content, to }) => {
-    const receiver_socket_id = users[to].socket_id
+  socket.on('private message', async (data) => {
+    const receiver_socket_id = users[data.to]?.socket_id
+    if (!receiver_socket_id) return
     socket.to(receiver_socket_id).emit('receive private message', {
-      content,
+      content: data.content,
       from: user_id
     })
+    await databaseService.Conversation.insertOne(
+      new Conversation({
+        receiver_id: data.to,
+        sender_id: new ObjectId(user_id),
+        content: data.content
+      })
+    )
   })
   socket.on('disconnect', () => {
     delete users[user_id]

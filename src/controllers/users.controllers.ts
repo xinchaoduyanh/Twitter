@@ -186,7 +186,7 @@ export const getProfileController = async (req: Request<{ username: string }>, r
   const user = await usersService.getProfile(username)
   return res.json({
     message: USERS_MESSAGES.GET_USER_PROFILE_SUCCESS,
-    result: USERS_MESSAGES.USER_NOT_FOUND
+    result: user
   })
 }
 export const followController = async (
