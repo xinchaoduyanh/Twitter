@@ -1,7 +1,8 @@
 import { Request, Response } from 'express'
+import { getConverStationRequest } from '~/models/requests/Converstations.request'
 import converstationService from '~/services/converstation.services'
 
-export const getConverStationController = async (req: Request, res: Response) => {
+export const getConverStationController = async (req: Request<getConverStationRequest>, res: Response) => {
   const { receiverId } = req.params
   const limit = Number(req.query.limit)
   const page = Number(req.query.page)
