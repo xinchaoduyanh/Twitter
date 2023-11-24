@@ -17,6 +17,7 @@ import tweetsRouter from './routes/tweet.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likesRouter from './routes/likes.routes'
 import searchRouter from './routes/search.routes'
+import converstationRouter from './routes/converstation.routes'
 // import './utils/fake'
 
 app.use(express.json())
@@ -29,6 +30,8 @@ app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
+app.use('/converstations', converstationRouter)
+
 import './utils/s3'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
@@ -67,21 +70,22 @@ io.on('connection', (socket) => {
   users[user_id] = {
     socket_id: socket.id
   }
-  socket.on('private message', async (data) => {
-    const receiver_socket_id = users[data.to]?.socket_id
+  socket.on('send message', async (data) => {
+    const { payload } = data
+    const receiver_socket_id = users[payload.receiver_id]?.socket_id
     if (!receiver_socket_id) return
-    socket.to(receiver_socket_id).emit('receive private message', {
-      content: data.content,
-      from: user_id
+    const converstation = new Conversation({
+      receiver_id: new ObjectId(payload.receiver_id),
+      sender_id: new ObjectId(payload.sender_id),
+      content: payload.content
     })
-    await databaseService.Conversation.insertOne(
-      new Conversation({
-        receiver_id: data.to,
-        sender_id: new ObjectId(user_id),
-        content: data.content
-      })
-    )
+    const result = await databaseService.Conversation.insertOne(converstation)
+    converstation._id = result.insertedId
+    socket.to(receiver_socket_id).emit('receive message', {
+      payload: converstation
+    })
   })
+
   socket.on('disconnect', () => {
     delete users[user_id]
     console.log(`socket ${socket.id} disconnected`)

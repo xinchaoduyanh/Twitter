@@ -129,18 +129,18 @@ class UsersService {
   async refreshToken(user_id: string, verify: UserVerifyStatus, refresh_token: string, exp: number) {
     const [new_access_token, new_refresh_token] = await Promise.all([
       this.signAccessToken({ user_id, verify: UserVerifyStatus.Verified }),
-      this.signRefreshToken({ user_id, verify: UserVerifyStatus.Verified, exp: exp }),
-      databaseService.refreshToken.deleteOne({ token: refresh_token })
+      this.signRefreshToken({ user_id, verify: UserVerifyStatus.Verified, exp: exp })
     ])
-    const decoded_refresh_token = await this.DecodedRefreshToken(refresh_token)
+    const decoded_refresh_token = await this.DecodedRefreshToken(new_refresh_token)
     await databaseService.refreshToken.insertOne(
       new RefreshToken({
         user_id: new ObjectId(user_id),
-        token: refresh_token,
+        token: new_refresh_token,
         exp: decoded_refresh_token.exp,
         iat: decoded_refresh_token.iat
       })
     )
+    await databaseService.refreshToken.deleteOne({ token: refresh_token })
     return {
       access_token: new_access_token,
       refresh_token: new_refresh_token
