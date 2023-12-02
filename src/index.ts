@@ -73,7 +73,9 @@ io.on('connection', (socket) => {
   socket.on('send message', async (data) => {
     const { payload } = data
     const receiver_socket_id = users[payload.receiver_id]?.socket_id
-    if (!receiver_socket_id) return
+    if (!receiver_socket_id) {
+      return
+    }
     const converstation = new Conversation({
       receiver_id: new ObjectId(payload.receiver_id),
       sender_id: new ObjectId(payload.sender_id),

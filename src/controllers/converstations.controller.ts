@@ -13,14 +13,15 @@ export const getConverStationController = async (req: Request<getConverStationRe
     limit: Number(limit),
     page: Number(page)
   })
-  console.log(receiverId, sender_id, data)
+  // console.log(receiverId, sender_id, data)
   return res.status(200).json({
     message: 'Get converstation successfully',
     result: {
       converstations: data.converstation,
       total: data.total,
-      totalpage: Math.ceil(data.total / limit),
-      limit: limit
+      total_page: Math.ceil(data.total / limit),
+      limit: limit,
+      page: page
     }
   })
 }
