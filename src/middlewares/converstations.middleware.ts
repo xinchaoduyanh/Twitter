@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express'
 import { checkSchema } from 'express-validator'
 import { validate } from '~/utils/validation'
 
-export const getConverStationValidator = validate(
+export const getconversationValidator = validate(
   checkSchema(
     {
       receiver_id: {

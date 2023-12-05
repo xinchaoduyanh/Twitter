@@ -88,7 +88,7 @@ usersRouter.post('/refresh_token', refreshTokenValidator, wrapRequestHandler(ref
  *
  *
  */
-usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController))
+usersRouter.post('/verify_email', emailVerifyTokenValidator, wrapRequestHandler(verifyEmailController))
 /**
  * Description. Verify email when user client click on the link in email
  * Path: /resend-verify-email
@@ -96,7 +96,7 @@ usersRouter.post('/verify-email', emailVerifyTokenValidator, wrapRequestHandler(
  * Header: { Authorization: Bearer <access_token> }
  * Body: {}
  */
-usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
+usersRouter.post('/resend_verify_email', accessTokenValidator, wrapRequestHandler(resendVerifyEmailController))
 /**
  * Description:Submit email when user click to reset the password
  * Path: /forgot-password
@@ -108,7 +108,7 @@ usersRouter.post('/resend-verify-email', accessTokenValidator, wrapRequestHandle
  *
  */
 
-usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
+usersRouter.post('/forgot_password', forgotPasswordValidator, wrapRequestHandler(forgotPasswordController))
 /**
  * Description:Validate the verify forgot Token from  user
  * Path: /verify-forgot-token-password
@@ -120,7 +120,7 @@ usersRouter.post('/forgot-password', forgotPasswordValidator, wrapRequestHandler
  *
  */
 usersRouter.post(
-  '/verify-forgot-password',
+  '/verify_forgot_password',
   verifyForgotPasswordTokenValidator,
   wrapRequestHandler(verifyforgotPasswordController)
 )
@@ -132,7 +132,7 @@ usersRouter.post(
  * Body: {forgot_password_token: string,password: string,confirm_password:string}
  *
  */
-usersRouter.post('/reset-password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
+usersRouter.post('/reset_password', resetPasswordValidator, wrapRequestHandler(resetPasswordController))
 /**
  * Description:Get profile
  * Path: /me
@@ -204,7 +204,7 @@ usersRouter.delete(
  * Method: PUT
  */
 usersRouter.put(
-  '/change-password',
+  '/change_password',
   accessTokenValidator,
   verifiedUserValidator,
   changePasswordValidator,

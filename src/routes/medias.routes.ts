@@ -11,12 +11,12 @@ import { wrapRequestHandler } from '~/utils/handlers'
 const mediasRouter = Router()
 /*
  * * Description: Upload new images
- * Path: /upload-image
+ * Path: /upload_image
  * Method: POST
  * Body: {file: File}
  */
 mediasRouter.post(
-  '/upload-image',
+  '/upload_image',
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(uploadImageController)

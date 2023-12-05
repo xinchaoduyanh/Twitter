@@ -17,10 +17,28 @@ import tweetsRouter from './routes/tweet.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likesRouter from './routes/likes.routes'
 import searchRouter from './routes/search.routes'
-import converstationRouter from './routes/converstation.routes'
+import conversationRouter from './routes/conversation.routes'
 // import './utils/fake'
+import YAML from 'yaml'
+import fs from 'fs'
+import swaggerUi from 'swagger-ui-express'
+// import swaggerjsdoc from 'swagger-jsdoc'
+const swaggerDocument = YAML.parse(fs.readFileSync('./swagger.yaml', 'utf8'))
 
+// const options = {
+//   definition: {
+//     openapi: '3.0.0',
+//     info: {
+//       title: 'Twitter API',
+//       version: '1.0.0',
+//       description: 'A simple Express Library API'
+//     }
+//   },
+//   apis: ['./openapi/*.yaml']
+// }
+// const onpenapiSpecification = swaggerJsdoc(options)
 app.use(express.json())
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(cors())
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
@@ -30,13 +48,16 @@ app.use('/tweets', tweetsRouter)
 app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
-app.use('/converstations', converstationRouter)
+app.use('/conversations', conversationRouter)
 
 import './utils/s3'
 import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { da } from '@faker-js/faker'
 import { ObjectId } from 'mongodb'
+
+import { verify } from 'crypto'
+import { verifyAccessToken } from './utils/common'
 import Conversation from './models/schemas/Converstation.schemas'
 
 const httpServer = createServer(app)
@@ -63,6 +84,22 @@ const users: {
     socket_id: string
   }
 } = {}
+io.use(async (socket, next) => {
+  const Authorization = socket.handshake.auth.Authorization
+  const access_token = Authorization?.split(' ')[1]
+  if (!access_token) {
+    return next(new Error('unauthorized'))
+  }
+  try {
+    await verifyAccessToken(access_token)
+  } catch (error) {
+    next({
+      data: error,
+      message: 'unauthorized',
+      name: 'unauthorizedError'
+    })
+  }
+})
 io.on('connection', (socket) => {
   // ...
   console.log(`socket ${socket.id} connected`)
@@ -70,21 +107,22 @@ io.on('connection', (socket) => {
   users[user_id] = {
     socket_id: socket.id
   }
+
   socket.on('send message', async (data) => {
     const { payload } = data
     const receiver_socket_id = users[payload.receiver_id]?.socket_id
     if (!receiver_socket_id) {
       return
     }
-    const converstation = new Conversation({
+    const conversation = new Conversation({
       receiver_id: new ObjectId(payload.receiver_id),
       sender_id: new ObjectId(payload.sender_id),
       content: payload.content
     })
-    const result = await databaseService.Conversation.insertOne(converstation)
-    converstation._id = result.insertedId
+    const result = await databaseService.Conversation.insertOne(conversation)
+    conversation._id = result.insertedId
     socket.to(receiver_socket_id).emit('receive message', {
-      payload: converstation
+      payload: conversation
     })
   })
 

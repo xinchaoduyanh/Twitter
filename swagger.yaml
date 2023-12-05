@@ -1,0 +1,991 @@
+openapi: 3.0.3
+info:
+  title: Twitter clone Typescript 2023 by Josee
+  description: |-
+    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
+    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
+    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
+    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
+
+    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
+
+    Some useful links:
+    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
+    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  termsOfService: http://swagger.io/terms/
+  contact:
+    email: apiteam@swagger.io
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.11
+externalDocs:
+  description: Find out more about Swagger
+  url: http://swagger.i npm
+servers:
+  - url: http://localhost:4000
+tags:
+  - name: users
+    description: API liên quan tới user
+  - name: medias
+    description: API liên quan tới media
+  - name: Tweets
+    description: API liên quan tới tweet
+  - name: Bookmark
+    description: API liên quan tới bookmark
+  - name: Like
+    description: API liên quan tới like
+  - name: Search
+    description: API liên quan tới search
+  - name: conversation
+    description: API liên quan tới conversation
+
+paths:
+  /users/{username}:
+    get:
+      tags:
+        - users
+      summary: Lấy thông tin user
+      description: Lấy thông tin user hiện tại
+      operationId: getMe
+      responses:
+        '200':
+          description: Get user profile success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Get user profile success'
+                  result:
+                    $ref: '#/components/schemas/User'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'User not found'
+  /users/change_password:
+    post:
+      tags:
+        - users
+      summary: Thay đổi mật khẩu
+      description: Thay đổi mật khẩu của người dùng
+      operationId: changePassword
+      requestBody:
+        description: Thông tin mật khẩu mới và mật khẩu cũ
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChangePasswordRequest'
+      responses:
+        '200':
+          description: Change password success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Change password success'
+        '401':
+          description: Old password is not match
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Old password is not match'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation error'
+                  errors:
+                    type: object
+                    properties:
+                      password:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: '12313123123'
+                          msg:
+                            type: string
+                            example: 'Your password must include at least one symbol, one uppercase letter, one lowercase letter, and one number'
+                          path:
+                            type: string
+                            example: 'password'
+                          location:
+                            type: string
+                            example: 'body'
+                      confirm_password:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: 'Duyanh11!123'
+                          msg:
+                            type: string
+                            example: 'Confirm password must match the password'
+                          path:
+                            type: string
+                            example: 'confirm_password'
+                          location:
+                            type: string
+                            example: 'body'
+  /users/follow:
+    post:
+      tags:
+        - users
+      summary: Theo dõi người dùng
+      description: Theo dõi một người dùng khác
+      operationId: followUser
+      requestBody:
+        description: Thông tin người dùng cần theo dõi
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowRequest'
+      responses:
+        '200':
+          description: Follow success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Follow success'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid followed user id'
+  /users/forgot_password:
+    post:
+      tags:
+        - users
+      summary: Quên mật khẩu
+      description: Yêu cầu quên mật khẩu và nhận hướng dẫn đặt lại mật khẩu
+      operationId: forgotPassword
+      requestBody:
+        description: Thông tin để đặt lại mật khẩu
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ForgotPasswordRequest'
+      responses:
+        '200':
+          description: Check your email to reset password
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Check your email to reset password'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation error'
+                  errors:
+                    type: object
+                    properties:
+                      email:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: 'aaaaa'
+                          msg:
+                            type: string
+                            example: 'Email is invalid'
+                          path:
+                            type: string
+                            example: 'email'
+                          location:
+                            type: string
+                            example: 'body'
+  /users/login:
+    post:
+      tags:
+        - users
+      summary: Đăng nhập
+      description: Đăng nhập vào hệ thống
+      operationId: login
+      requestBody:
+        description: Thông tin đăng nhập
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginBody'
+      responses:
+        '200':
+          description: Đăng nhập thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Login success'
+                  result:
+                    $ref: '#/components/schemas/SuccessAuthentication'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Not found'
+        '405':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation exception'
+  /users/logout:
+    post:
+      tags:
+        - users
+      summary: Đăng xuất
+      description: Đăng xuất khỏi hệ thống và vô hiệu hóa refresh token
+      operationId: logout
+      security:
+        - BearerAuth: []
+      requestBody:
+        description: Thông tin refresh token
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: '{{refresh_token}}'
+      responses:
+        '200':
+          description: Đăng xuất thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Logout success'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation error'
+                  errors:
+                    type: object
+                    properties:
+                      refresh_token:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU0YjkxMGQ3OTI4MzhhYjRkN2ZmOTFhIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoxLCJpYXQiOjE3MDE2NzIxOTcsImV4cCI6MTczMzIyOT30.sFhsPVCcyFrOh7CRpmbz7VgwbzHl5bjTmcEuAljzMhc'
+                          msg:
+                            type: string
+                            example: "Expected ',' or '}' after property value in JSON at position 94"
+                          path:
+                            type: string
+                            example: 'refresh_token'
+                          location:
+                            type: string
+                            example: 'body'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+      
+  /users/me:
+    patch:
+      tags:
+        - "users"
+      summary: Cập nhật thông tin user
+      description: Lấy thông tin user hiện tại
+      operationId: updateMe
+      security:
+        - BearerAuth: []
+      requestBody:
+        content:
+          application/json:
+            example:
+              name: 'duyanh nahaha'
+              location: 'Hoai Duc, Ha Noi'
+              website: 'xinchaoduyanh.com'
+              date_of_birth: '2003-12-19T16:06:28.409Z'
+              avatar: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg'
+              bio: 'A software developer'
+      responses:
+        '200':
+          description: User update success
+          content:
+            application/json:
+              example:
+                message: 'User update success'
+                result:
+                  _id: '654b910d792838ab4d7ff91a'
+                  name: 'duyanh nahaha'
+                  email: 'duyanh19122k3+7@gmail.com'
+                  date_of_birth: '2003-12-19T16:06:28.409Z'
+                  created_at: '2023-11-08T13:45:49.366Z'
+                  updated_at: '2023-12-05T06:22:27.957Z'
+                  verify: 1
+                  twitter_circle: []
+                  bio: 'A software developer'
+                  location: 'Hoai Duc, Ha Noi'
+                  website: 'xinchaoduyanh.com'
+                  username: 'user654b910d792838ab4d7ff91a'
+                  avatar: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg'
+                  cover_photo: ''
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Not found'
+        '422':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation exception'
+                  errors:
+                    type: object
+                    properties:
+                      username:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: 'user654b910d792838ab4d7ff91a'
+                          msg:
+                            type: string
+                            example: 'Username must be 4-15 characters long and contain only letters, numbers, underscores, and not only numbers'
+                          path:
+                            type: string
+                            example: 'username'
+                          location:
+                            type: string
+                            example: 'body'
+    get:
+      tags:
+        - users
+      summary: Lấy thông tin user
+      description: Lấy thông tin user hiện tại
+      operationId: getMe
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Lấy thông tin user thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Get my profile success'
+                  result:
+                    $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Not found'
+        '405':
+          description: Validation exception
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation exception'
+  /users/refresh_token:
+    post:
+      tags:
+        - users
+      summary: Refresh token
+      description: Cập nhật access token mới bằng refresh token
+      operationId: refresh_token
+      requestBody:
+        description: Thông tin refresh token
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                refresh_token:
+                  type: string
+                  example: 'old_refresh_token'
+      responses:
+        '200':
+          description: Cập nhật token thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Refresh token success'
+                  result:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: 'your_new_access_token_here'
+                      refresh_token:
+                        type: string
+                        example: 'your_new_refresh_token_here'
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Refresh token is used or not exist'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+      
+  /users/register:
+    post:
+      tags:
+        - users
+      summary: Đăng ký
+      description: Đăng ký tài khoản mới
+      operationId: register
+      requestBody:
+        description: Thông tin đăng ký
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterBody'
+      responses:
+        '200':
+          description: Đăng ký thành công
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Success to register'
+                  result:
+                    type: object
+                    properties:
+                      access_token:
+                        type: string
+                        example: 'your_access_token_here'
+                      refresh_token:
+                        type: string
+                        example: 'your_refresh_token_here'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Validation error'
+                  errors:
+                    type: object
+                    properties:
+                      email:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                            example: 'field'
+                          value:
+                            type: string
+                            example: 'duyanh19122k3+8@gmail.com'
+                          msg:
+                            type: string
+                            example: 'Email is already exist'
+                          path:
+                            type: string
+                            example: 'email'
+                          location:
+                            type: string
+                            example: 'body'
+
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid request'
+
+  /users/reset_password:
+    post:
+      tags:
+        - users
+      summary: Đặt lại mật khẩu
+      description: Đặt lại mật khẩu của người dùng sau khi quên mật khẩu
+      operationId: resetPassword
+      requestBody:
+        description: Thông tin để đặt lại mật khẩu
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResetPasswordRequest'
+      responses:
+        '200':
+          description: Reset password success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Reset password success'
+  /users/verify_email:
+    post:
+      tags:
+        - users
+      summary: Xác thực email
+      description: Xác thực email người dùng sau khi đăng ký
+      operationId: verifyEmail
+      requestBody:
+        description: Thông tin để xác thực email
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmailRequest'
+      responses:
+        '200':
+          description: Email verify success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Email verify success'
+                  result:
+                    $ref: '#/components/schemas/VerifyEmailResult'
+  /users/unfollow:
+    post:
+      tags:
+        - users
+      summary: Hủy theo dõi người dùng
+      description: Hủy theo dõi một người dùng khác
+      operationId: unfollowUser
+      requestBody:
+        description: Thông tin người dùng cần hủy theo dõi
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FollowRequest'
+      responses:
+        '200':
+          description: Unfollow success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Unfollow success'
+        '404':
+          description: User not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Invalid followed user id'
+  /users/verify_forgot_password:
+    post:
+      tags:
+        - users
+      summary: Xác thực token quên mật khẩu
+      description: Xác thực token để đặt lại mật khẩu sau khi quên mật khẩu
+      operationId: verifyForgotPassword
+      requestBody:
+        description: Thông tin để xác thực token quên mật khẩu
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyForgotPasswordRequest'
+      responses:
+        '200':
+          description: Forget password verify success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: 'Forget password verify success !'
+
+  /medias/upload_image:
+    post:
+      tags:
+        - medias
+      summary: Tải lên hình ảnh
+      description: Tải lên hình ảnh và nhận kết quả
+      operationId: uploadImage
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                images:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Tải lên thành công
+          content:
+            application/json:
+              example:
+                message: Upload success
+                res:
+                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg"
+                    type: 0
+        '400':
+          description: Lỗi yêu cầu không hợp lệ
+          content:
+            application/json:
+              example:
+                message: Invalid request
+        '422':
+          description: Lỗi xác thực hoặc xử lý yêu cầu
+          content:
+            application/json:
+              example:
+                message: Validation or processing error
+
+components:
+  schemas:
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          example: duyanh19122k3+7@gmail.com
+        password:
+          type: string
+          example: Duyanh11!123
+    RegisterBody:
+      type: object
+      properties:
+        password:
+          type: string
+          example: Duyanh11!123
+        confirm_password:
+          type: string
+          example: Duyanh11!123
+        email:
+          type: string
+          example: duyanh19122k3+8@gmail.com
+        name:
+          type: string
+          example: duyanh ne
+        date_of_birth:
+          type: string
+          format: date-time
+          example: '2023-09-15T16:06:28.409Z'
+    SuccessAuthentication:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: 'your_access_token_here'
+        refresh_token:
+          type: string
+          example: 'your_refresh_token_here'
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+          format: MongoDB ObjectId
+          example: '654b910d792838ab4d7ff91a'
+        name:
+          type: string
+          example: 'duyanh ne'
+        email:
+          type: string
+          example: 'duyanh19122k3+7@gmail.com'
+        date_of_birth:
+          type: string
+          format: date-time
+          example: '2023-09-15T16:06:28.409Z'
+        created_at:
+          type: string
+          format: date-time
+          example: '2023-11-08T13:45:49.366Z'
+        updated_at:
+          type: string
+          format: date-time
+          example: '2023-11-08T14:37:53.587Z'
+        verify:
+          $ref: '#/components/schemas/UserVerifyStatus'
+
+        twitter_circle:
+          type: array
+          items:
+            type: string
+            format: MongoId
+          example: ['652429d6e407d3af0e0940bb', '65256575fea2a4e2d7ba4bc8']
+        bio:
+          type: string
+          example: ''
+        location:
+          type: string
+          example: ''
+        website:
+          type: string
+          example: ''
+        username:
+          type: string
+          example: 'user654b910d792838ab4d7ff91a'
+        avatar:
+          type: string
+          example: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg'
+        cover_photo:
+          type: string
+          example: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg'
+    ChangePasswordRequest:
+      type: object
+      required:
+        - old_password
+        - password
+        - confirm_password
+      properties:
+        old_password:
+          type: string
+          example: 'Toideptr@i123'
+        password:
+          type: string
+          example: 'Duyanh11!123'
+        confirm_password:
+          type: string
+          example: 'Duyanh11!123'
+    ForgotPasswordRequest:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          example: 'duyanh19122k3+7@gmail.com'
+    UserVerifyStatus:
+      type: number
+      enum: ['Unverified', 'Verified', 'Banned']
+      example: 1
+      description: |
+        Enum representing the user verification status.
+
+        - `Unverified`: Email not yet verified (default value = 0).
+        - `Verified`: Email has been verified.
+        - `Banned`: User is banned.
+    FollowRequest:
+      type: object
+      required:
+        - followed_user_id
+      properties:
+        followed_user_id:
+          type: string
+          example: '652429d6e407d3af0e0940bb'
+    ResetPasswordRequest:
+      type: object
+      required:
+        - password
+        - confirm_password
+        - forgot_password_token
+      properties:
+        password:
+          type: string
+          example: 'Xx12345@1'
+        confirm_password:
+          type: string
+          example: 'Xx12345@1'
+        forgot_password_token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU0YjkxMGQ3OTI4MzhhYjRkN2ZmOTFhIiwidG9rZW5fdHlwZSI6MiwidmVyaWZ5IjoxLCJpYXQiOjE3MDE3NjA5MjYsImV4cCI6MTcwMjM2NTcyNn0.sbfV9LIL0mllJKzXDKzGKEDBQqX1iujZAraHIH_LjA4'
+    VerifyEmailRequest:
+      type: object
+      required:
+        - email_verify_token
+      properties:
+        email_verify_token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU2ZWQxYTUzYTVhYzQ3MWQwN2FjNzYzIiwidG9rZW5fdHlwZSI6MywidmVyaWZ5IjowLCJpYXQiOjE3MDE3NjE0NDUsImV4cCI6MTcwMjM2NjI0NX0.DsqvjuGav_EkLLoar6mrz7O24YAIUWugD853fbQPUcQ'
+    VerifyEmailResult:
+      type: object
+      properties:
+        access_token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5CI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU2ZWQxYTUzYTVhYzQ3MWQwN2FjNzYzIiwidG9rZW5fdHlwZSI6MCwidmVyaWZ5IjoxLCJpYXQiOjE3MDE3NjE2ODIsImV4cCI6MTcwMTc2MjU4Mn0.qDDTVF8z8gB4z_79YbgXXrBhylFkZqtraNE661Qxgqo'
+        refresh_token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5CI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU2ZWQxYTUzYTVhYzQ3MWQwN2FjNzYzIiwidG9rZW5fdHlwZSI6MSwidmVyaWZ5IjoxLCJpYXQiOjE3MDE3NjE2ODIsImV4cCI6MTczMzMxOTI4Mn0.4NSbcRbdA0GE7unbnsEVRx_YrZT0N3CBjjnTVxrzVzg'
+    VerifyForgotPasswordRequest:
+      type: object
+      required:
+        - forgot_password_token
+      properties:
+        forgot_password_token:
+          type: string
+          example: 'eyJhbGciOiJIUzI1NiIsInR5CI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU2ZWQxYTUzYTVhYzQ3MWQwN2FjNzYzIiwidG9rZW5fdHlwZSI6MiwidmVyaWZ5IjoxLCJpYXQiOjE3MDE3NjIzOTUsImV4cCI6MTcwMjM2NzE5NX0.HWo_VeSh-xGEs8SuIyvXAbFHvuj8fMCXu-Hhu1wNZAc'
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

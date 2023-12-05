@@ -8,7 +8,7 @@ import Tweet from '~/models/schemas/Tweet.schemas'
 import { HashTag } from '~/models/schemas/HashTag.schemas'
 import Bookmark from '~/models/schemas/Bookmarks.schemas'
 import Like from '~/models/schemas/Likes.schemas'
-import Conversation from '~/models/schemas/Converstation.schemas'
+import Conversation from '~/models/schemas/conversation.schemas'
 
 dotenv.config()
 const uri = `mongodb+srv://${process.env.DB_USERNAME}:${process.env.DB_PASSWORD}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
