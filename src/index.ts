@@ -1,7 +1,7 @@
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'express'
 const app = express()
 import { config } from 'dotenv'
-import { envConfig } from './constants/config'
+import { envConfig, isProduction } from './constants/config'
 const PORT = envConfig.port || 3000
 
 import usersRouter from './routes/uses.routes'
@@ -12,7 +12,7 @@ import { initFolerUpload } from './utils/files'
 import argv from 'minimist'
 import { UPLOAD_IMAGE_DIR, UPLOAD_VIDEO_DIR } from './constants/dir'
 import staticRouter from './routes/static.routes'
-import cors from 'cors'
+import cors, { CorsOptions } from 'cors'
 import tweetsRouter from './routes/tweet.routes'
 import bookmarksRouter from './routes/bookmarks.routes'
 import likesRouter from './routes/likes.routes'
@@ -22,6 +22,17 @@ import conversationRouter from './routes/conversation.routes'
 import YAML from 'yaml'
 import fs from 'fs'
 import swaggerUi from 'swagger-ui-express'
+import helmet from 'helmet'
+import './utils/s3'
+import { createServer } from 'http'
+import { Server } from 'socket.io'
+import { da } from '@faker-js/faker'
+import { ObjectId } from 'mongodb'
+
+import { verify } from 'crypto'
+import { verifyAccessToken } from './utils/common'
+import Conversation from './models/schemas/Converstation.schemas'
+//---------------------------------------------------------SWAGGER----------------------------------------------------- //
 // import swaggerjsdoc from 'swagger-jsdoc'
 const swaggerDocument = YAML.parse(fs.readFileSync('./swagger.yaml', 'utf8'))
 
@@ -39,7 +50,15 @@ const swaggerDocument = YAML.parse(fs.readFileSync('./swagger.yaml', 'utf8'))
 // const onpenapiSpecification = swaggerJsdoc(options)
 app.use(express.json())
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
+app.use(helmet())
+// Tai sao CORS phai khai bao o day ma khong duoc khai bao duoi router nhi ???
+const corsOptions: CorsOptions = {
+  origin: isProduction ? envConfig.clientUrl : '*'
+}
+console.log(envConfig.clientUrl, envConfig.port)
+
 app.use(cors())
+//---------------------------------------------------------ROUTER----------------------------------------------------- //
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
 app.use('/static', staticRouter)
@@ -50,15 +69,7 @@ app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
 app.use('/conversations', conversationRouter)
 
-import './utils/s3'
-import { createServer } from 'http'
-import { Server } from 'socket.io'
-import { da } from '@faker-js/faker'
-import { ObjectId } from 'mongodb'
-
-import { verify } from 'crypto'
-import { verifyAccessToken } from './utils/common'
-import Conversation from './models/schemas/Converstation.schemas'
+//---------------------------------------------------------SEVER---------------------------------------------------- //
 
 const httpServer = createServer(app)
 
