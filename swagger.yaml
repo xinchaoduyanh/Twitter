@@ -809,6 +809,78 @@ paths:
             application/json:
               example:
                 message: Validation or processing error
+  /medias/upload_video:
+   post:
+      summary: Tải lên video
+      description: Tải lên video và nhận kết quả
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Tải lên thành công
+          content:
+            application/json:
+              example:
+                message: Upload success
+                res:
+                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4"
+                    type: 0
+        '400':
+          description: Lỗi yêu cầu không hợp lệ
+          content:
+            application/json:
+              example:
+                message: Invalid request
+        '422':
+          description: Lỗi xác thực hoặc xử lý yêu cầu
+          content:
+            application/json:
+              example:
+                message: Validation or processing error
+  /medias/upload_video_hls:
+    post:
+      summary: Tải lên video HLS
+      description: Tải lên video HLS và nhận kết quả
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                video:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Tải lên thành công
+          content:
+            application/json:
+              example:
+                message: Upload success
+                res:
+                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4"
+                    type: 0
+        '400':
+          description: Lỗi yêu cầu không hợp lệ
+          content:
+            application/json:
+              example:
+                message: Invalid request
+        '422':
+          description: Lỗi xác thực hoặc xử lý yêu cầu
+          content:
+            application/json:
+              example:
+                message: Validation or processing error
 
 components:
   schemas:

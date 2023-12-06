@@ -1,8 +1,8 @@
 import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'express'
 const app = express()
 import { config } from 'dotenv'
-config()
-const PORT = process.env.PORT || 3000
+import { envConfig } from './constants/config'
+const PORT = envConfig.port || 3000
 
 import usersRouter from './routes/uses.routes'
 import mediasRouter from './routes/medias.routes'

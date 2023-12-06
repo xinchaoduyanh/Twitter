@@ -1,13 +1,14 @@
 import { SESClient, SendEmailCommand } from '@aws-sdk/client-ses'
 import { config } from 'dotenv'
 import fs from 'fs'
-config()
+import { envConfig } from '~/constants/config'
+
 // Create SES service object.
 const sesClient = new SESClient({
-  region: process.env.AWS_REGION,
+  region: envConfig.awsRegion,
   credentials: {
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID as string
+    secretAccessKey: envConfig.awsSecretAccessKey as string,
+    accessKeyId: envConfig.awsAccessKeyId as string
   }
 })
 const verifyEmailTemplate = fs.readFileSync('./src/template/verify-email.html', 'utf-8')
@@ -53,7 +54,7 @@ const createSendEmailCommand = ({
 
 export const sendVerifyEmail = async (toAddress: string, subject: string, body: string) => {
   const sendEmailCommand = createSendEmailCommand({
-    fromAddress: process.env.SES_FROM_ADDRESS as string,
+    fromAddress: envConfig.sesFromAddress as string,
     toAddresses: toAddress,
     body,
     subject
@@ -73,7 +74,7 @@ export const sendRegisterVerifyEmail = async (
     template
       .replace('{{title}}', 'Please verify your email')
       .replace('{{content}}', 'Click the button below to verify your email address.')
-      .replace('{{link}}', `${process.env.CILENT_URL}/verify-email?token=${email_verify_token}`)
+      .replace('{{link}}', `${envConfig.clientUrl}/verify-email?token=${email_verify_token}`)
       .replace('{{titleLink}}', 'Verify your email')
   )
 }
@@ -83,7 +84,7 @@ export const sendForgotPasswordEmail = async (
   forgotPasswordToken: string,
   template: string = verifyEmailTemplate
 ) => {
-  console.log('dm cuoc doi')
+  console.log('dm cuoc doi ?? ')
 
   return sendVerifyEmail(
     toAddress,
@@ -91,7 +92,7 @@ export const sendForgotPasswordEmail = async (
     template
       .replace('{{title}}', 'Please create a new password')
       .replace('{{content}}', 'Click the button below to create a new password')
-      .replace('{{link}}', `${process.env.CILENT_URL}/forgot-password?token=${forgotPasswordToken}`)
+      .replace('{{link}}', `${envConfig.clientUrl}/forgot-password?token=${forgotPasswordToken}`)
       .replace('{{titleLink}}', 'Create a new password')
   )
 }

@@ -27,7 +27,7 @@ import { config } from 'dotenv'
 import { UPLOAD_IMAGE_DIR } from '~/constants/dir'
 import path from 'path'
 import { sendForgotPasswordEmail } from '~/utils/email'
-config()
+import { envConfig } from '~/constants/config'
 export const loginController = async (req: Request<ParamsDictionary, any, LoginRequestBody>, res: Response) => {
   const user = req.user as User
   console.log(user)
@@ -49,7 +49,7 @@ export const loginController = async (req: Request<ParamsDictionary, any, LoginR
 export const oauthController = async (req: Request, res: Response) => {
   const { code } = req.query
   const result = await usersService.oauth(code as string)
-  const urlRedirect = `${process.env.CLIENT_REDIRECT_CALLBACK}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
+  const urlRedirect = `${envConfig.clientRedirectCallback}?access_token=${result.access_token}&refresh_token=${result.refresh_token}&new_user=${result.newUser}&verify=${result.verify}`
   return res.redirect(urlRedirect)
 }
 export const registerController = async (req: Request<ParamsDictionary, any, RegisterRequestBody>, res: Response) => {

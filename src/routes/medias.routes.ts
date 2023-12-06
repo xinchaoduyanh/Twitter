@@ -23,31 +23,31 @@ mediasRouter.post(
 )
 /*
  * * Description: Up load new video
- * Path: /upload-video
+ * Path: /upload_video
  * Method: POST
  * Body: {file: File}
  */
 mediasRouter.post(
-  '/upload-video',
+  '/upload_video',
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(uploadVideoController)
 )
 /*
  * * Description: Up load new video
- * Path: /upload-video
+ * Path: /upload_video
  * Method: POST
  * Body: {file: File}
  */
 mediasRouter.post(
-  '/upload-video-hls',
+  '/upload_video_hls',
   accessTokenValidator,
   verifiedUserValidator,
   wrapRequestHandler(uploadVideoHLSController)
 )
 /*
  * * Description: Up load new video
- * Path: /upload-video
+ * Path: /upload_video
  * Method: POST
  * Body: {file: File}
  */
