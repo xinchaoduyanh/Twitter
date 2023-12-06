@@ -55,7 +55,6 @@ app.use(helmet())
 const corsOptions: CorsOptions = {
   origin: isProduction ? envConfig.clientUrl : '*'
 }
-console.log(envConfig.clientUrl, envConfig.port)
 
 app.use(cors())
 //---------------------------------------------------------ROUTER----------------------------------------------------- //
