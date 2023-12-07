@@ -2,8 +2,6 @@ import express, { Request, Response, NextFunction, ErrorRequestHandler } from 'e
 const app = express()
 import { config } from 'dotenv'
 import { envConfig, isProduction } from './constants/config'
-const PORT = envConfig.port || 3000
-
 import usersRouter from './routes/uses.routes'
 import mediasRouter from './routes/medias.routes'
 import databaseService from './services/database.services'
@@ -28,11 +26,12 @@ import { createServer } from 'http'
 import { Server } from 'socket.io'
 import { da } from '@faker-js/faker'
 import { ObjectId } from 'mongodb'
-
+import { rateLimit } from 'express-rate-limit'
 import { verify } from 'crypto'
 import { verifyAccessToken } from './utils/common'
 import Conversation from './models/schemas/Converstation.schemas'
-//---------------------------------------------------------SWAGGER----------------------------------------------------- //
+
+//---------------------------------------------------------SWAGGER && APP SETUP----------------------------------------------------- //
 // import swaggerjsdoc from 'swagger-jsdoc'
 const swaggerDocument = YAML.parse(fs.readFileSync('./swagger.yaml', 'utf8'))
 
@@ -49,14 +48,24 @@ const swaggerDocument = YAML.parse(fs.readFileSync('./swagger.yaml', 'utf8'))
 // }
 // const onpenapiSpecification = swaggerJsdoc(options)
 app.use(express.json())
+const PORT = envConfig.port || 3000
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
+  legacyHeaders: false // Disable the `X-RateLimit-*` headers.
+  // store: ... , // Use an external store for consistency across multiple server instances.
+})
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 app.use(helmet())
+app.use(limiter)
 // Tai sao CORS phai khai bao o day ma khong duoc khai bao duoi router nhi ???
 const corsOptions: CorsOptions = {
   origin: isProduction ? envConfig.clientUrl : '*'
 }
 
 app.use(cors())
+app.use(defaultErrorHandler)
 //---------------------------------------------------------ROUTER----------------------------------------------------- //
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
@@ -80,8 +89,7 @@ databaseService.connect().then(() => {
   databaseService.indexTweet()
 })
 initFolerUpload()
-app.use(defaultErrorHandler)
-
+//---------------------------------------------------------SOCKET---------------------------------------------------- //
 const io = new Server(httpServer, {
   /* options */
   cors: {
