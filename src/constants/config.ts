@@ -11,7 +11,7 @@ config({
 })
 
 export const envConfig = {
-  port: process.env.PORT ? process.env.PORT : 4003,
+  port: process.env.PORT ? process.env.PORT : 4000,
   host: process.env.HOST as string,
   clientUrl: process.env.CLIENT_URL as string,
   dbUsername: process.env.DB_USERNAME,
