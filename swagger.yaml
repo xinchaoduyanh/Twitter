@@ -23,7 +23,7 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.i npm
 servers:
-  - url: http://localhost:4000
+  - url: https://twitter-clone-api.vuduyanh.id.vn
 tags:
   - name: users
     description: API liên quan tới user
@@ -375,11 +375,11 @@ paths:
                   message:
                     type: string
                     example: 'Invalid request'
-      
+
   /users/me:
     patch:
       tags:
-        - "users"
+        - 'users'
       summary: Cập nhật thông tin user
       description: Lấy thông tin user hiện tại
       operationId: updateMe
@@ -577,7 +577,7 @@ paths:
                   message:
                     type: string
                     example: 'Invalid request'
-      
+
   /users/register:
     post:
       tags:
@@ -795,7 +795,7 @@ paths:
               example:
                 message: Upload success
                 res:
-                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg"
+                  - url: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/images/865bc6c168ba0d15804351201.jpg'
                     type: 0
         '400':
           description: Lỗi yêu cầu không hợp lệ
@@ -810,7 +810,7 @@ paths:
               example:
                 message: Validation or processing error
   /medias/upload_video:
-   post:
+    post:
       summary: Tải lên video
       description: Tải lên video và nhận kết quả
       requestBody:
@@ -831,7 +831,7 @@ paths:
               example:
                 message: Upload success
                 res:
-                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4"
+                  - url: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4'
                     type: 0
         '400':
           description: Lỗi yêu cầu không hợp lệ
@@ -867,7 +867,7 @@ paths:
               example:
                 message: Upload success
                 res:
-                  - url: "https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4"
+                  - url: 'https://twitter-ap-southeast-1-by-duyanh.s3.ap-southeast-1.amazonaws.com/videos/WMQpgat_Y-.mp4'
                     type: 0
         '400':
           description: Lỗi yêu cầu không hợp lệ
