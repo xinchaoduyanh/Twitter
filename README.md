@@ -35,5 +35,6 @@
 
 ## API Documentation
 
-- Explore the API endpoints using [Swagger Documentation](<[your-api-doc-url](https://twitter-clone-api.vuduyanh.id.vn/api-docs)https://twitter-clone-api.vuduyanh.id.vn/api-docs>).
+-- Explore the API endpoints using [Swagger Documentation](https://twitter-clone-api.vuduyanh.id.vn/api-docs).
+
 
