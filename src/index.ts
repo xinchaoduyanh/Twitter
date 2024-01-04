@@ -64,8 +64,7 @@ const corsOptions: CorsOptions = {
   origin: isProduction ? envConfig.clientUrl : '*'
 }
 
-app.use(cors())
-app.use(defaultErrorHandler)
+app.use(cors(corsOptions))
 //---------------------------------------------------------ROUTER----------------------------------------------------- //
 app.use('/users', usersRouter)
 app.use('/medias', mediasRouter)
@@ -76,6 +75,7 @@ app.use('/bookmarks', bookmarksRouter)
 app.use('/likes', likesRouter)
 app.use('/search', searchRouter)
 app.use('/conversations', conversationRouter)
+app.use(defaultErrorHandler)
 
 //---------------------------------------------------------SEVER---------------------------------------------------- //
 

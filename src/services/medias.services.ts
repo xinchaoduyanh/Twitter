@@ -165,15 +165,10 @@ class MediasService {
   }
   async uploadVideoHLS(req: Request) {
     const files = await handleUploadVideo(req)
-    // console.log(files)
     const result: Media[] = await Promise.all(
       files.map(async (file) => {
         const newName = getNameFromFullName(file.newFilename)
-
-        // await encodeHLSWithMultipleVideoStreams(file.filepath)
-        // await fsPromises.unlink(file.filepath)
         queue.enqueue(file.filepath)
-        // await fsPromises.unlink(file.filepath)
         return {
           url: isProduction
             ? `${envConfig.host}/static/video-hls/${newName}/master.m3u8`

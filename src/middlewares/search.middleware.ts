@@ -20,10 +20,8 @@ export const searchValidator = validate(
     },
     followed_user: {
       optional: true,
-
       isIn: {
         options: [['0', '1']],
-
         errorMessage: 'followed_user must be one of the following values: 0, 1'
       }
     }

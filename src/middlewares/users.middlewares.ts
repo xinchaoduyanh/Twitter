@@ -232,7 +232,10 @@ export const registerValidator = validate(
           options: async (value) => {
             const result = await usersService.checkEmailExist(value)
             if (result) {
-              throw new Error('Email is already exist')
+              throw new ErrorWithStatus({
+                message: USERS_MESSAGES.EMAIL_ALREADY_EXISTS,
+                status: HTTP_STATUS.UNAUTHORIZED
+              })
             }
             return true
           }

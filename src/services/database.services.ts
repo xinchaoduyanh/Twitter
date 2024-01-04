@@ -11,7 +11,6 @@ import Like from '~/models/schemas/Likes.schemas'
 import Conversation from '~/models/schemas/Converstation.schemas'
 import { envConfig } from '~/constants/config'
 
-dotenv.config()
 const uri = `mongodb+srv://${envConfig.dbUsername}:${envConfig.dbPassword}@twitter.ksyhz00.mongodb.net/?retryWrites=true&w=majority`
 
 class DatabaseService {

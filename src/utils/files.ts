@@ -76,7 +76,7 @@ export const handleUploadVideo = async (req: Request) => {
   })
   return new Promise<File[]>((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
-      console.log('files', files)
+      // console.log('files', files)
       // console.log('fields', fields)
       // console.log('err', err)
       if (err) {

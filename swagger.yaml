@@ -1,17 +1,7 @@
 openapi: 3.0.3
 info:
   title: Twitter clone Typescript 2023 by Josee
-  description: |-
-    This is a sample Pet Store Server based on the OpenAPI 3.0 specification.  You can find out more about
-    Swagger at [https://swagger.io](https://swagger.io). In the third iteration of the pet store, we've switched to the design first approach!
-    You can now help us improve the API whether it's by making changes to the definition itself or to the code.
-    That way, with time, we can improve the API in general, and expose some of the new features in OAS3.
-
-    _If you're looking for the Swagger 2.0/OAS 2.0 version of Petstore, then click [here](https://editor.swagger.io/?url=https://petstore.swagger.io/v2/swagger.yaml). Alternatively, you can load via the `Edit > Load Petstore OAS 2.0` menu option!_
-
-    Some useful links:
-    - [The Pet Store repository](https://github.com/swagger-api/swagger-petstore)
-    - [The source API definition for the Pet Store](https://github.com/swagger-api/swagger-petstore/blob/master/src/main/resources/openapi.yaml)
+  description: 🌸🌸🌸
   termsOfService: http://swagger.io/terms/
   contact:
     email: apiteam@swagger.io
@@ -23,7 +13,8 @@ externalDocs:
   description: Find out more about Swagger
   url: http://swagger.i npm
 servers:
-  - url: https://twitter-clone-api.vuduyanh.id.vn
+  
+  - url: http://localhost:4000
 tags:
   - name: users
     description: API liên quan tới user
@@ -37,8 +28,8 @@ tags:
     description: API liên quan tới like
   - name: Search
     description: API liên quan tới search
-  - name: conversation
-    description: API liên quan tới conversation
+  - name: Conversation
+    description: API liên quan tới Conversation
 
 paths:
   /users/{username}:
@@ -48,6 +39,12 @@ paths:
       summary: Lấy thông tin user
       description: Lấy thông tin user hiện tại
       operationId: getMe
+      parameters:                 # Thêm phần parameters
+        - name: username          # Đặt tên cho tham số
+          in: path                # Xác định tham số là path parameter
+          required: true          # Chỉ định rằng tham số là bắt buộc
+          schema:
+            type: string
       responses:
         '200':
           description: Get user profile success
@@ -78,6 +75,8 @@ paths:
       summary: Thay đổi mật khẩu
       description: Thay đổi mật khẩu của người dùng
       operationId: changePassword
+      security:
+        - BearerAuth: []
       requestBody:
         description: Thông tin mật khẩu mới và mật khẩu cũ
         required: true
@@ -162,6 +161,8 @@ paths:
       summary: Theo dõi người dùng
       description: Theo dõi một người dùng khác
       operationId: followUser
+      security:
+        - BearerAuth: []
       requestBody:
         description: Thông tin người dùng cần theo dõi
         required: true
@@ -197,6 +198,8 @@ paths:
       summary: Quên mật khẩu
       description: Yêu cầu quên mật khẩu và nhận hướng dẫn đặt lại mật khẩu
       operationId: forgotPassword
+      security:
+        - BearerAuth: []
       requestBody:
         description: Thông tin để đặt lại mật khẩu
         required: true
@@ -662,6 +665,8 @@ paths:
       summary: Đặt lại mật khẩu
       description: Đặt lại mật khẩu của người dùng sau khi quên mật khẩu
       operationId: resetPassword
+      security:
+        - BearerAuth: []
       requestBody:
         description: Thông tin để đặt lại mật khẩu
         required: true
@@ -707,15 +712,24 @@ paths:
                     example: 'Email verify success'
                   result:
                     $ref: '#/components/schemas/VerifyEmailResult'
-  /users/unfollow:
-    post:
+  /users/unfollow/{user_id}:
+    delete:
       tags:
         - users
       summary: Hủy theo dõi người dùng
       description: Hủy theo dõi một người dùng khác
-      operationId: unfollowUser
+      operationId: followUser
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          description: ID của người dùng cần huỷ theo dõi
+          schema:
+            type: string
+      security:
+        - BearerAuth: []
       requestBody:
-        description: Thông tin người dùng cần hủy theo dõi
+        description: Thông tin người dùng cần theo dõi
         required: true
         content:
           application/json:
@@ -723,7 +737,7 @@ paths:
               $ref: '#/components/schemas/FollowRequest'
       responses:
         '200':
-          description: Unfollow success
+          description: Follow success
           content:
             application/json:
               schema:
@@ -731,7 +745,7 @@ paths:
                 properties:
                   message:
                     type: string
-                    example: 'Unfollow success'
+                    example: 'Follow success'
         '404':
           description: User not found
           content:
@@ -811,8 +825,12 @@ paths:
                 message: Validation or processing error
   /medias/upload_video:
     post:
+      tags:
+        - medias
       summary: Tải lên video
       description: Tải lên video và nhận kết quả
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -847,8 +865,12 @@ paths:
                 message: Validation or processing error
   /medias/upload_video_hls:
     post:
+      tags:
+        - medias
       summary: Tải lên video HLS
       description: Tải lên video HLS và nhận kết quả
+      security:
+        - BearerAuth: []
       requestBody:
         required: true
         content:
@@ -881,6 +903,448 @@ paths:
             application/json:
               example:
                 message: Validation or processing error
+  /medias/video-status/{videoId}:
+    get:
+      tags:
+        - medias
+      summary: Lấy trạng thái video
+      description: Lấy trạng thái video dựa trên videoId
+      operationId: getVideoStatus
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: videoId
+          in: path
+          required: true
+          description: ID của video
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get video status success
+          content:
+            application/json:
+              example:
+                result:
+                  _id: "65740561dd6f6521626ba86c"
+                  name: "Wjx1h1DQKR"
+                  status: 1
+                  message: ""
+                  createdAt: "2023-12-09T06:12:49.171Z"
+                  updatedAt: "2023-12-09T06:18:37.670Z"
+                message: "Get video status success"
+  /tweets/:
+    post:
+      tags:
+        - Tweets
+      summary: Tạo tweet
+      description: Tạo một tweet mới
+      operationId: createTwee
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            example:
+              type: 3
+              audience: 1
+              content: "quotes7"
+              parent_id: "653a0f8e6b303cd8f0029501"
+              hashtags: ["hihi"]
+              mentions: ["65256575fea2a4e2d7ba4bc8", "652429d6e407d3af0e0940bb", "65256c0c359c47ea413f1efb", "652693520bcbc48a48a0559d"]
+              medias: []
+              ok: "xam vao canh tay hinh bong hoa cuc chay ne hihi"
+      responses:
+        '201':
+          description: Create tweet successfully
+          content:
+            application/json:
+              example:
+                message: "Create tweet successfully"
+                result:
+                  _id: "658d4ba79e0cff2db04267d8"
+                  user_id: "655767fa92a4a0e052e35f4f"
+                  type: 3
+                  audience: 1
+                  content: "quotes7"
+                  parent_id: "653a0f8e6b303cd8f0029501"
+                  hashtags:
+                    - "6534fa364c55b5d0c2af95aa"
+                  mentions:
+                    - "65256575fea2a4e2d7ba4bc8"
+                    - "652429d6e407d3af0e0940bb"
+                    - "65256c0c359c47ea413f1efb"
+                    - "652693520bcbc48a48a0559d"
+                  medias: []
+                  guest_views: 0
+                  user_views: 0
+                  created_at: "2023-12-28T10:19:19.872Z"
+                  updated_at: "2023-12-28T10:19:19.872Z"
+  /tweets/{tweetId}:
+    get:
+      tags:
+        - Tweets
+      summary: Lấy thông tin tweet
+      description: Lấy thông tin chi tiết của một tweet dựa trên tweetId
+      operationId: getTweet
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tweetId
+          in: path
+          required: true
+          description: ID của tweet
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Get tweet successfully
+          content:
+            application/json:
+              example:
+                message: "Get tweet successfully"
+                result:
+                  _id: "6534f6539de511a70065e9e5"
+                  user_id: "65256c0c359c47ea413f1efb"
+                  type: 0
+                  audience: 0
+                  content: "who la duy anh dep trai is"
+                  parent_id: null
+                  hashtags: []
+                  medias: []
+                  guest_views: 0
+                  user_views: 2
+                  created_at: "2023-10-22T10:15:47.301Z"
+                  updated_at: "2023-12-28T10:44:19.273Z"
+                  mentions: []
+                  bookmarks: []
+                  likes: []
+                  bookmarks_count: 0
+                  likes_count: 0
+                  retweet_count: 0
+                  comment_count: 0
+                  quote_count: 0
+        '403':
+          description: User not in Twitter circle of author
+          content:
+            application/json:
+              example:
+                message: "User not in Twitter circle of author"
+  /bookmarks:  
+    post:
+      tags:
+      - Bookmark
+      summary: Tạo bookmark cho 1 Tweets
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet_id:
+                  type: string
+                  example: "653a0f8e6b303cd8f0029501"
+      responses:
+        '200':
+          description: Bookmark tweet success
+          content:
+            application/json:
+              example:
+                message: "Bookmark tweet success"
+                result:
+                  _id: "65965370376f7be2896b9f96"
+                  tweet_id: "653a0f8e6b303cd8f0029501"
+                  user_id: "655767fa92a4a0e052e35f4f"
+                  created_at: "2024-01-04T06:42:56.692Z"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              example:
+                message: "Validation error"
+                errors:
+                  tweet_id:
+                    type: "field"
+                    value: "653a0f8e6b303cd8f00295101"
+                    msg: "Tweet id must be a valid tweet id"
+                    path: "tweet_id"
+                    location: "body"
+  /bookmarks/tweets/{tweetId}:
+    delete:
+      tags:
+      - Bookmark
+      summary: Xóa đi 1 bookmark đã đc  tạo
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tweetId
+          in: path
+          required: true
+          description: ID của tweet
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unbookmark tweet success
+          content:
+            application/json:
+              example:
+                message: "Unbookmark tweet success"
+                result:
+                  _id: "65965370376f7be2896b9f96"
+                  tweet_id: "653a0f8e6b303cd8f0029501"
+                  user_id: "655767fa92a4a0e052e35f4f"
+                  created_at: "2024-01-04T06:42:56.692Z"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              example:
+                message: "Validation error"
+                errors:
+                  tweet_id:
+                    type: "field"
+                    value: "653a0f8e6b303cd8f00295012"
+                    msg: "Tweet id must be a valid tweet id"
+                    path: "tweet_id"
+                    location: "body"
+
+  /likes:  
+    post:
+      tags:
+      - Like
+      summary: Thực hiện việc Like cho 1 Tweets
+      security:
+      - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tweet_id:
+                  type: string
+                  example: "653a0f8e6b303cd8f0029501"
+      responses:
+        '200':
+          description: Like tweet success
+          content:
+            application/json:
+              example:
+                message: "Like tweet success"
+                result:
+                  _id: "65965370376f7be2896b9f96"
+                  tweet_id: "653a0f8e6b303cd8f0029501"
+                  user_id: "655767fa92a4a0e052e35f4f"
+                  created_at: "2024-01-04T06:42:56.692Z"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              example:
+                message: "Validation error"
+                errors:
+                  tweet_id:
+                    type: "field"
+                    value: "653a0f8e6b303cd8f00295101"
+                    msg: "Tweet id must be a valid tweet id"
+                    path: "tweet_id"
+                    location: "body"
+  /likes/tweets/{tweetId}:
+    delete:
+      tags:
+      - Like
+      summary: Hủy like 1 tweet
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: tweetId
+          in: path
+          required: true
+          description: ID của tweet
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Unlike tweet success
+          content:
+            application/json:
+              example:
+                message: "Unlike tweet success"
+                result:
+                  _id: "65965370376f7be2896b9f96"
+                  tweet_id: "653a0f8e6b303cd8f0029501"
+                  user_id: "655767fa92a4a0e052e35f4f"
+                  created_at: "2024-01-04T06:42:56.692Z"
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              example:
+                message: "Validation error"
+                errors:
+                  tweet_id:
+                    type: "field"
+                    value: "653a0f8e6b303cd8f00295012"
+                    msg: "Tweet id must be a valid tweet id"
+                    path: "tweet_id"
+                    location: "body"
+  /search:
+    post:
+      tags:
+      - Search
+      summary: Tìm kiếm Tweets với 1 hoặc các từ khóa cho trước
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: content
+          required: true
+          schema:
+            type: string
+          description: Từ khóa cần tìm kiếm
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+          description: Number of tweets per page
+          example: 2
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+          description: Page number
+          example: 1
+        - in: query
+          name: media_type
+          schema:
+            $ref: "#/components/schemas/MediaType"
+          description: Type of media (e.g., video)
+          example: "video"
+      responses:
+        '200':
+          description: Successful search
+          content:
+            application/json:
+              example:
+                result:
+                  tweets:
+                    - _id: "653e8eab212c02b14caa0063"
+                      user_id: "653e8e6e212c02b14ca9fab9"
+                      type: 2
+                      audience: 0
+                      content: "hoc Adimpleo verbera arca solium sollicito. Aestas tersus ceno. Taceo bellum desipio benevolentia uter aliquid tabula succurro patior. Armarium conatus audacia. Velociter distinctio delectus inflammatio alveus compello voluptate. Sequi dedecor titulus acer conor tremo. Illum repellendus comptus peior vinum pauci creber bonus. Nam tendo tabesco constans ullam contego catena amo labore acquiro. Pecto allatus ventus comes deduco. Ab cuppedia calco aranea conservo torqueo. Doloremque calco surculus thesaurus. Communis deleniti aliquam dolore caste vel tamdiu. Ademptio brevis depraedor casus creptio strues. Delectus thermae accusamus summisse amaritudo adimpleo. Vestrum terror crinis modi carmen facilis adipisci cunabula caute soluta. Tremo verecundia pax autem somnus sub solutio. Vita reprehenderit adeptio. Audentia damnatio admitto inventore tempora tenetur cinis. Color conforto cauda vilitas. Rerum tenetur cena. Amplitudo civis comparo aro perferendis. Modi tamdiu tracto carcer. Vociferor verus talis uter. Vomica apostolus umquam. Tracto somnus depono conturbo. Coniuratio abscido aro temperantia apostolus. Adeptio amoveo cohors vilitas cerno. Cohaero voluptatum tantillus contabesco coaegresco comis apostolus stips aeternus atavus. Angustus usque vulgaris veritatis. Ceno velut balbus beatus. Adfero speciosus cedo arbitro alioqui coaegresco ipsam. Defluo amplexus arceo taceo aestas supplanto. Strenuus adipiscor truculenter amet dolorum contigo temeritas tonsor modi vorax. Trucido abstergo pauci temporibus bis. Cumque voluptas officia aspernatur vereor cuius ventosus synagoga dedecor saepe. Ad tenus decimus. Vitae quas callide abstergo vulnus reiciendis paulatim adhuc nemo. Tumultus consequuntur argumentum odit ipsam. Cruentus cibus fugiat repellendus decerno apparatus suasoria bonus. Ciminatio ascit ver aptus bellicus. Neque vorago accedo absorbeo. Turpis calcar minima tenus abundans cubo possimus suscipio. Amplitudo valetudo conitor quisquam suppellex uberrime. Comburo tametsi veritas defendo vobis sumo mollitia caterva thesaurus vorax. Tactus defaeco uter addo socius velociter depulso. Vilicus curriculum vobis. Tui ventus valeo. Culpa derideo versus ver. Numquam magni tres tergo sui adversus ambulo. Umbra certe tabula amplexus ad accendo conventus. Coniuratio terra arbustum absorbeo supellex commodi. Amissio caries calamitas demitto conculco contra ascisco acsi. Tot amiculum thema artificiose baiulus curtus aegrotatio validus. Vacuus vereor caute textus. Thema aduro calcar calculus conor speciosus asperiores amaritudo ultra voluptate. Paulatim cumque termes via ustulo conventus. Ambulo vinum spiritus bellicus ademptio aeneus. Teres fugiat vestigium carmen decumbo est iste. Deludo tero cuius capio vapulus amitto. Anser considero decor cupiditate theologus. Tum itaque sulum. Spiritus cohors absorbeo omnis alienus terror valde delibero. Terebro verbera vulgaris. Conatus subiungo callide placeat cubo comptus."
+                      hashtags:
+                        - "653e8b45f96b77c9e5c4fe86"
+                        - "653e8b45f96b77c9e5c4fe87"
+                        - "653e8b45f96b77c9e5c4fe88"
+                        - "653e8b45f96b77c9e5c4fe89"
+                        - "653e8b45f96b77c9e5c4fe8a"
+                        - "653e8b45f96b77c9e5c4fe8b"
+                      medias:
+                        - type: 2
+                          url: "https://picsum.photos/seed/oQKBMg/640/480"
+                      created_at: "2023-10-29T16:56:13.085Z"
+                      updated_at: "2024-01-04T07:06:06.019Z"
+                      guest_views: 0
+                      user_views: 10
+                      author:
+                        name: "Priscilla.Ward"
+                        email: "Ellsworth.Welch74@gmail.com"
+                        twitter_circle: []
+                        bio: ""
+                        location": ""
+                        website": ""
+                        username: "user653e8e6e212c02b14ca9fab9"
+                        avatar": ""
+                        cover_photo": ""
+                      bookmarks: []
+                      likes: []
+                      bookmarks_count: 0
+                      likes_count: 0
+                      retweet_count: 0
+                      comment_count: 0
+                      quote_count: 0
+                  total: 1
+  /conversations/receiver/{receiverId}:
+    get:
+      tags:
+        - Conversation
+      security:
+        - BearerAuth: []
+      summary: Lấy ra tin nhắn từ Id của người muốn nhắn tin
+      parameters:
+        - in: path
+          name: receiverId
+          required: true
+          schema:
+            type: string
+          description: ID of the receiver
+          example: "654b910d792838ab4d7ff91a"
+        - in: query
+          name: limit
+          required: true
+          schema:
+            type: integer
+          description: Number of conversations per page
+          example: 10
+        - in: query
+          name: page
+          required: true
+          schema:
+            type: integer
+          description: Page number
+          example: 1
+      responses:
+        '200':
+          description: Get conversation successfully
+          content:
+            application/json:
+              example:
+                message: "Get conversation successfully"
+                result:
+                  conversations:
+                    - _id: "656b6de905c02b2c7cda53e9"
+                      receiver_id: "654b910d792838ab4d7ff91a"
+                      sender_id: "655767fa92a4a0e052e35f4f"
+                      content: "hahaah"
+                      created_at: "2023-12-02T17:48:25.877Z"
+                      updated_at: "2023-12-02T17:48:25.877Z"
+                    - _id: "656b6de805c02b2c7cda53e8"
+                      receiver_id: "655767fa92a4a0e052e35f4f"
+                      sender_id: "654b910d792838ab4d7ff91a"
+                      content: "dung rui"
+                      created_at: "2023-12-02T17:48:24.192Z"
+                      updated_at: "2023-12-02T17:48:24.192Z"
+                    - _id: "656b6de505c02b2c7cda53e7"
+                      receiver_id: "654b910d792838ab4d7ff91a"
+                      sender_id: "655767fa92a4a0e052e35f4f"
+                      content: "dung ko"
+                      created_at: "2023-12-02T17:48:21.995Z"
+                      updated_at: "2023-12-02T17:48:21.995Z"
+                    - _id: "656b6de405c02b2c7cda53e6"
+                      receiver_id: "654b910d792838ab4d7ff91a"
+                      sender_id: "655767fa92a4a0e052e35f4f"
+                      content: "lam duoc roi"
+                      created_at: "2023-12-02T17:48:20.441Z"
+                      updated_at: "2023-12-02T17:48:20.441Z"
+                    - _id: "656b6de105c02b2c7cda53e5"
+                      receiver_id: "655767fa92a4a0e052e35f4f"
+                      sender_id: "654b910d792838ab4d7ff91a"
+                      content: "chung ta"
+                      created_at: "2023-12-02T17:48:17.580Z"
+                      updated_at: "2023-12-02T17:48:17.580Z"
+                  total: 97
+                  total_page: 20
+                  limit: 5
+                  page: 1  
 
 components:
   schemas:
@@ -1056,6 +1520,11 @@ components:
         forgot_password_token:
           type: string
           example: 'eyJhbGciOiJIUzI1NiIsInR5CI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNjU2ZWQxYTUzYTVhYzQ3MWQwN2FjNzYzIiwidG9rZW5fdHlwZSI6MiwidmVyaWZ5IjoxLCJpYXQiOjE3MDE3NjIzOTUsImV4cCI6MTcwMjM2NzE5NX0.HWo_VeSh-xGEs8SuIyvXAbFHvuj8fMCXu-Hhu1wNZAc'
+    MediaType:
+      type: string
+      enum:
+        - "video"
+        - "image"
   securitySchemes:
     BearerAuth:
       type: http

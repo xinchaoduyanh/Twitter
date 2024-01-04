@@ -25,6 +25,7 @@ export const verifyAccessToken = async (access_token: string, req?: Request) => 
       ;(req as Request).decoded_authorization = decoded_authorization
     }
   } catch (error) {
+    console.log('error', error)
     throw new ErrorWithStatus({
       message: capitalize((error as JsonWebTokenError).message),
       status: HTTP_STATUS.UNAUTHORIZED
